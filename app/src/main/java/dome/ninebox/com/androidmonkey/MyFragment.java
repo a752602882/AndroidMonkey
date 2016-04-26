@@ -15,23 +15,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-import java.util.logging.LogRecord;
-
 import dome.ninebox.com.androidmonkey.adapter.MyRecyclerViewAdapter;
+import dome.ninebox.com.androidmonkey.adapter.MyStaggeredViewAdapter;
 import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
 
 /**
  * Created by Administrator on 2016/4/25.
  */
-public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnItemClickListener,SwipeRefreshLayout.OnRefreshListener{
+public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnItemClickListener,MyStaggeredViewAdapter.OnItemClickListener,SwipeRefreshLayout.OnRefreshListener{
 
 
     private View mView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private MyRecyclerViewAdapter mRecyclerViewAdapter;
-    //private MyStaggeredViewAdapter mStaggeredAdapter;
+    private MyStaggeredViewAdapter mStaggeredAdapter;
 
     private static final int VERTICAL_LIST = 0;
     private static final int HORIZONTAL_LIST = 1;
@@ -57,10 +57,15 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
         super.onActivityCreated(savedInstanceState);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.id_swiperefreshlayout);
+
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.id_recyclerview);
 
         flag = (int) getArguments().get("flag");
         configRecyclerView();
+        // 刷新时，指示器旋转后变化的颜色
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.main_blue_light, R.color.main_blue_dark);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
 
     }
 
@@ -87,9 +92,9 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
             mRecyclerViewAdapter.setmOnItemClickListener(this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         } else {
-         /*   mStaggeredAdapter = new MyStaggeredViewAdapter(getActivity());
+            mStaggeredAdapter = new MyStaggeredViewAdapter(getActivity());
             mStaggeredAdapter.setOnItemClickListener(this);
-            mRecyclerView.setAdapter(mStaggeredAdapter);*/
+            mRecyclerView.setAdapter(mStaggeredAdapter);
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -102,7 +107,7 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
 
     @Override
     public void onItemLongClick(View view, int position) {
-        SnackbarUtil.show(mRecyclerView, getString(R.string.item_clicked), 0);
+        SnackbarUtil.show(mRecyclerView, getString(R.string.item_longclicked), 1);
     }
 
     @Override
