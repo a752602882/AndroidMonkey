@@ -26,7 +26,7 @@ import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 
-public class MyActivity extends AppCompatActivity implements  View.OnClickListener {
+public class MyActivity extends AppCompatActivity implements  View.OnClickListener ,ViewPager.OnPageChangeListener{
 
     //初始化各种控件，照着xml中的顺序写
     private DrawerLayout mDrawerLayout;
@@ -95,7 +95,7 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
         mNavigationView.inflateMenu(R.menu.menu_nav);
 
         // 自己写的方法，设置NavigationView中menu的item被选中后要执行的操作
-     //   onNavgationViewMenuItemSelected(mNavigationView);
+      onNavgationViewMenuItemSelected(mNavigationView);
 
         // 初始化ViewPager的适配器，并设置给它
         mViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), mTitles, mFragments);
@@ -105,7 +105,7 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
         mViewPager.setOffscreenPageLimit(5);
 
         // 给ViewPager添加页面动态监听器（为了让Toolbar中的Title可以变化相应的Tab的标题）
-       // mViewPager.addOnPageChangeListener(this);
+        mViewPager.addOnPageChangeListener(this);
 
         mTabLayout.setTabMode(MODE_SCROLLABLE);
         // 将TabLayout和ViewPager进行关联，让两者联动起来
@@ -113,9 +113,9 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
 
         // 设置Tablayout的Tab显示ViewPager的适配器中的getPageTitle函数获取到的标题
         mTabLayout.setTabsFromPagerAdapter(mViewPagerAdapter);
-/*
+
         // 设置FloatingActionButton的点击事件
-        mFloatingActionButton.setOnClickListener(this);*/
+        mFloatingActionButton.setOnClickListener(this);
 
 
     }
@@ -126,7 +126,7 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
      * @param mNav
      */
     private void onNavgationViewMenuItemSelected(NavigationView mNav) {
-       /* mNav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        mNav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
@@ -156,7 +156,7 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
 
                 return true;
             }
-        });*/
+        });
     }
 
     private void initViews() {
@@ -173,7 +173,7 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-      //  getMenuInflater().inflate(R.menu.menu_my, menu);
+        getMenuInflater().inflate(R.menu.menu_my, menu);
         return true;
     }
 
@@ -191,11 +191,26 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
 
     @Override
     public void onClick(View v) {
-      /*  switch (v.getId()) {
+        switch (v.getId()) {
             // FloatingActionButton的点击事件
             case R.id.id_floatingactionbutton:
                 SnackbarUtil.show(v, getString(R.string.plusone), 0);
                 break;
-        }*/
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+       mToolbar.setTitle(mTitles[position]);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

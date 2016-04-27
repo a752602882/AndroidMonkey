@@ -20,8 +20,8 @@ public class MyStaggeredViewAdapter extends RecyclerView.Adapter<MyRecyclerViewH
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-    private List<String> mDatas;
-    private List<Integer> mHeights;
+    public List<String> mDatas;
+    public List<Integer> mHeights;
 
 
     public MyStaggeredViewAdapter(Context mContext) {

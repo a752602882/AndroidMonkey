@@ -123,9 +123,9 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
                     mRecyclerViewAdapter.mDatas.add(0, "new" + temp);
                     mRecyclerViewAdapter.notifyDataSetChanged();
                 } else {
-                    /*mStaggeredAdapter.mDatas.add(0, "new" + temp);
+                    mStaggeredAdapter.mDatas.add(0, "new" + temp);
                     mStaggeredAdapter.mHeights.add(0, (int) (Math.random() * 300) + 200);
-                    mStaggeredAdapter.notifyDataSetChanged();*/
+                    mStaggeredAdapter.notifyDataSetChanged();
                 }
             }
         }, 1000);
