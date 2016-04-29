@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import dome.ninebox.com.androidmonkey.R;
 
@@ -37,7 +38,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
      */
     @Override
     public MyRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mLayoutInflater.inflate(R.layout.item_main, parent, false);
+        View view = mLayoutInflater.inflate(R.layout.item_feed, parent, false);
         MyRecyclerViewHolder mViewHodler = new MyRecyclerViewHolder(view);
         return mViewHodler;
 
@@ -65,7 +66,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
                 }
             });
         }
-        holder.mTextView.setText(mDatas.get(position));
+   //     holder.mTextView.setText(mDatas.get(position));
+        bindDefaultFeedItem(position,holder);
     }
 
     @Override
@@ -83,5 +85,16 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
 
     public  void setmOnItemClickListener(OnItemClickListener listener){
         this.mOnItemClickListener = listener;
+    }
+
+
+    private  void bindDefaultFeedItem(int position,MyRecyclerViewHolder holder){
+        if (position % 2 == 0) {
+            holder.ivFeedCenter.setImageResource(R.mipmap.img_feed_center_1);
+            holder.ivFeedBottom.setImageResource(R.mipmap.img_feed_bottom_1);
+        } else {
+            holder.ivFeedCenter.setImageResource(R.mipmap.img_feed_center_2);
+            holder.ivFeedBottom.setImageResource(R.mipmap.img_feed_bottom_2);
+        }
     }
 }

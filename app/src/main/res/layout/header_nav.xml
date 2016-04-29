@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="220dp"
-    android:background="@drawable/ic_user_background"
+    android:background="@mipmap/ic_user_background"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -12,7 +12,7 @@
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:scaleType="fitXY"
-        android:src="@drawable/author" />
+        android:src="@mipmap/author" />
 
     <TextView
         android:id="@+id/id_header_authorname"

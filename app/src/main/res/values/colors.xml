@@ -8,5 +8,6 @@
     <color name="main_black_grey">#6D6D6D</color>
     <color name="main_red_grey">#7e2f2f</color>
     <color name="main_red">#ca3a3a</color>
+    <color name="text_like_counter">#2b5a83</color>
 
 </resources>
