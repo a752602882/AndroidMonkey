@@ -24,11 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/ivFeedCenter"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
+         <include layout="@layout/item_feed_in" />
 
 
         </dome.ninebox.com.androidmonkey.adapter.SquaredFrameLayout>
