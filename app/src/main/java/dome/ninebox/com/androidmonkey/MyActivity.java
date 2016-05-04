@@ -1,5 +1,6 @@
 package dome.ninebox.com.androidmonkey;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,6 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +30,7 @@ import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 
-public class MyActivity extends AppCompatActivity implements  View.OnClickListener ,ViewPager.OnPageChangeListener{
+public class MyActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     //初始化各种控件，照着xml中的顺序写
     private DrawerLayout mDrawerLayout;
@@ -44,6 +48,11 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
     private List<Fragment> mFragments;
     // ViewPager的数据适配器
     private MyViewPagerAdapter mViewPagerAdapter;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +69,9 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
         // 对各种控件进行设置、适配、填充数据
         configViews();
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void initData() {
@@ -73,6 +85,7 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
             Bundle mBundle = new Bundle();
             mBundle.putInt("flag", i);
             MyFragment mFragment = new MyFragment();
+
             mFragment.setArguments(mBundle);
             mFragments.add(i, mFragment);
         }
@@ -95,7 +108,7 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
         mNavigationView.inflateMenu(R.menu.menu_nav);
 
         // 自己写的方法，设置NavigationView中menu的item被选中后要执行的操作
-      onNavgationViewMenuItemSelected(mNavigationView);
+        onNavgationViewMenuItemSelected(mNavigationView);
 
         // 初始化ViewPager的适配器，并设置给它
         mViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager(), mTitles, mFragments);
@@ -206,11 +219,51 @@ public class MyActivity extends AppCompatActivity implements  View.OnClickListen
 
     @Override
     public void onPageSelected(int position) {
-       mToolbar.setTitle(mTitles[position]);
+        mToolbar.setTitle(mTitles[position]);
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "My Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://dome.ninebox.com.androidmonkey/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "My Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://dome.ninebox.com.androidmonkey/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }

@@ -25,6 +25,7 @@ import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
 public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnItemClickListener,MyStaggeredViewAdapter.OnItemClickListener,SwipeRefreshLayout.OnRefreshListener{
 
 
+
     private View mView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -49,6 +50,7 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
        mView = inflater.inflate(R.layout.frag_main,container,false);
        return  mView;
 
+        //(MyApplication) getActivity().getApplication().get;
 
     }
 
@@ -87,6 +89,7 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
                 mLayoutManager = new StaggeredGridLayoutManager(SPAN_COUNT, StaggeredGridLayoutManager.VERTICAL);
                 break;
         }
+
         if (flag != STAGGERED_GRID) {
             mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity());
             mRecyclerViewAdapter.setmOnItemClickListener(this);
@@ -120,10 +123,10 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
                 mSwipeRefreshLayout.setRefreshing(false);
                 int temp = (int) (Math.random() * 10);
                 if (flag != STAGGERED_GRID) {
-                    mRecyclerViewAdapter.mDatas.add(0, "new" + temp);
+                  //  mRecyclerViewAdapter.mDatas.add(0, "new" + temp);
                     mRecyclerViewAdapter.notifyDataSetChanged();
                 } else {
-                    mStaggeredAdapter.mDatas.add(0, "new" + temp);
+                //    mStaggeredAdapter.mDatas.add(0, "new" + temp);
                     mStaggeredAdapter.mHeights.add(0, (int) (Math.random() * 300) + 200);
                     mStaggeredAdapter.notifyDataSetChanged();
                 }

@@ -18,7 +18,7 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder {
     public MyRecyclerViewHolder(View itemView) {
         super(itemView);
         mTextView = (TextView) itemView.findViewById(R.id.id_textview);
-        ivFeedCenter = (ImageView) itemView.findViewById(R.id.ivFeedCenter);
+       // ivFeedCenter = (ImageView) itemView.findViewById(R.id.ivFeedCenter);
         ivFeedBottom = (ImageView) itemView.findViewById(R.id.ivFeedBottom);
     }
 }
