@@ -71,6 +71,9 @@ public class MyFragment extends Fragment  implements  MyRecyclerViewAdapter.OnIt
 
     }
 
+
+
+
     private void configRecyclerView() {
         switch (flag) {
             case VERTICAL_LIST:

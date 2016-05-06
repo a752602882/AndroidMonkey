@@ -18,15 +18,25 @@ import android.view.MenuItem;
 import android.view.View;
 
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dome.ninebox.com.androidmonkey.adapter.MyViewPagerAdapter;
+import dome.ninebox.com.androidmonkey.model.MatchDetails;
 import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
+import dome.ninebox.com.androidmonkey.utils.Utility;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 
@@ -42,6 +52,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     private FloatingActionButton mFloatingActionButton;
     private NavigationView mNavigationView;
 
+
     // TabLayout中的tab标题
     private String[] mTitles;
     // 填充到ViewPager中的Fragment
@@ -54,6 +65,9 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
      */
     private GoogleApiClient client;
 
+    private static List<String> matches;
+    private static List<MatchDetails> matchDetailses;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +75,12 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
         // 初始化各种控件
         initViews();
+
+        //从服务器读取最新的25场比赛ID
+        HttpReadMatches();
+
+        //从服务器读取1场比赛的详细信息
+      //  HttpReadMatchDetails();
 
         // 初始化mTitles、mFragments等ViewPager需要的数据
         //这里的数据都是模拟出来了，自己手动生成的，在项目中需要从网络获取数据
@@ -132,6 +152,63 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
 
     }
+
+    private void HttpReadMatches() {
+        RequestQueue mQueue = Volley.newRequestQueue(this);
+        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?" +
+                "key=BAA464D3B432D062BEA99BA753214681&matches_requested=25&account_id=125690482";
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("请求英雄成功！response--" + response.toString());
+                        matches=  Utility.handleMatchesResponse(response);
+                        if (matches==null)
+                            VolleyLog.d("Matches", "matches read error");
+
+                        // Utility.handleWeatherResponse(WeatherActivity.this, response);
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("请求mathes失败！ error--"+error);
+            }
+        });
+        mQueue.add(jsonRequest);
+
+    }
+
+    private void HttpReadMatchDetails() {
+        RequestQueue mQueue = Volley.newRequestQueue(this);
+        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails" +
+                "/V001/?key=BAA464D3B432D062BEA99BA753214681&match_id=2339569073";
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("请求英雄成功！response--" + response.toString());
+
+                        matchDetailses=  Utility.handleMatchDetailsResponse(response);
+                        if (matches==null)
+                            VolleyLog.d("Matches","matches read error");
+
+                        // Utility.handleWeatherResponse(WeatherActivity.this, response);
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("请求mathes失败！ error--"+error);
+            }
+        });
+        mQueue.add(jsonRequest);
+    }
+
 
     /**
      * 设置NavigationView中menu的item被选中后要执行的操作

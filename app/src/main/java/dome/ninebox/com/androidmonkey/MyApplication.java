@@ -7,11 +7,16 @@ import android.database.Cursor;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+
 import org.json.JSONObject;
 
+import java.util.List;
+
+import dome.ninebox.com.androidmonkey.model.MatchDetails;
 import dome.ninebox.com.androidmonkey.utils.DotaMaxDB;
 import dome.ninebox.com.androidmonkey.utils.Utility;
 
@@ -22,6 +27,10 @@ public class MyApplication extends Application {
     private static Context content;
     private static DotaMaxDB db;
 
+
+
+
+
     public static DotaMaxDB getDb() {
         return db;
     }
@@ -31,15 +40,22 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+      /*  JLog.init(this)
+                .setDebug(BuildConfig.DEBUG);*/
         content = getApplicationContext();
         db = DotaMaxDB.getInstance(content);
 
-
+        //把英雄放进数据库
         while(db.loadHeroes()==null)
           HttpReadHeroes();
 
 
+
+
     }
+
+
+
 
     private void HttpReadHeroes() {
         RequestQueue mQueue = Volley.newRequestQueue(content);

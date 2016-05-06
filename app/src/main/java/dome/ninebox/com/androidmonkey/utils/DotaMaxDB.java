@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dome.ninebox.com.androidmonkey.model.Heroes;
+import dome.ninebox.com.androidmonkey.model.MatchDetails;
 
 /**
  * Created by Administrator on 2016/5/4.
@@ -19,7 +20,7 @@ public class DotaMaxDB {
      * 数据库名
      */
 
-    public static final String DB_NAME = "cool_weather";
+    public static final String DB_NAME = "DOTA";
 
     /**
      * 数据库版本
@@ -39,6 +40,7 @@ public class DotaMaxDB {
                 DB_NAME, null, VERSION);
         //方法以读写方式打开数据库，一旦数据库的磁盘空间满了，数据库就只能读而不能写，
         db = dbHelper.getWritableDatabase();
+
     }
 
     /**
@@ -58,15 +60,46 @@ public class DotaMaxDB {
 
     public void saveHeroes(Heroes hero) {
 
-        if (hero != null) {
-            ContentValues values = new ContentValues();
-            values.put("id", hero.getId());
-            values.put("name", hero.getName());
-            values.put("localized_name", hero.getLocalized_name());
 
-            db.insert("Heroes", null, values);
+        try{
+            //在这里执行多个数据库操作
+            //执行过程中可能会抛出异常
+            for (int i=0; i<1000; i++) {
+
+                String sql = "insert into Heroes values ("+ hero.getId()+ "," + hero.getName()+ ","+ hero.getLocalized_name()+")";
+
+                System.out.println(sql);
+
+                db.execSQL(sql);
+
+            }
+
+            db.setTransactionSuccessful();
+            //在setTransactionSuccessful和endTransaction之间不进行任何数据库操作
+        }catch(Exception e){
+            //当数据库操作出现错误时，需要捕获异常，结束事务
+            db.endTransaction();
+            throw e;
         }
+        //当所有操作执行完成后结束一个事务
+        db.endTransaction();
+
+
+
+
+//        if (hero != null) {
+//            ContentValues values = new ContentValues();
+//            values.put("id", hero.getId());
+//            values.put("name", hero.getName());
+//            values.put("localized_name", hero.getLocalized_name());
+//
+//            db.insert("Heroes", null, values);
+//        }
     }
+
+
+
+
 
     public List<Heroes> loadHeroes() {
 

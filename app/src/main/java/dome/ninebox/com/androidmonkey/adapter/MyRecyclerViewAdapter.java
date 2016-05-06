@@ -48,13 +48,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
         mLayoutInflater = LayoutInflater.from(mContext);
         mMatch_ids = new ArrayList<String>();
 
-        queryMatchsID();
+       // queryMatchsID();
 
 
     }
 
-    private List<String> queryMatchsID() {
-     /*
+       /*private List<String> queryMatchsID() {
+
         RequestQueue mQueue = Volley.newRequestQueue(mContext);
         String url="https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener() {
@@ -81,7 +81,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
         };
         stringRequest.setTag("MatchId");
         mQueue.add(stringRequest);
-*/
+
 //-------------------------------------
         //----JsonObjectRequest 的用法---用法与StringRequest基本相同----
         RequestQueue mQueue = Volley.newRequestQueue(mContext);
@@ -110,7 +110,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
 
     }
 
-
+*/
     /**
      * 创建ViewHolder
      */
