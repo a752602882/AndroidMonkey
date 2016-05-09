@@ -15,8 +15,8 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
     public static final String CREATE_HEROES= "create table Heroes ("
             + "hid integer primary key autoincrement, "
             + "id integer, "
-            + "province_name text, "
-            + "province_code text)";
+            + "name text, "
+            + "localized_name text)";
 
     public DotaMaxDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -29,6 +29,7 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+     // db.delete("Heroes",null,null);
+       db.execSQL(CREATE_HEROES);
     }
 }

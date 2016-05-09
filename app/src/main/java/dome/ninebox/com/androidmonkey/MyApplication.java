@@ -46,7 +46,7 @@ public class MyApplication extends Application {
         db = DotaMaxDB.getInstance(content);
 
         //把英雄放进数据库
-        while(db.loadHeroes()==null)
+        if(db.loadHeroes().size()==0)
           HttpReadHeroes();
 
 
@@ -59,8 +59,7 @@ public class MyApplication extends Application {
 
     private void HttpReadHeroes() {
         RequestQueue mQueue = Volley.newRequestQueue(content);
-        String url ="https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/?" +
-                "key=BAA464D3B432D062BEA99BA753214681&language=zh_cn";
+        String url ="https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/?key=BAA464D3B432D062BEA99BA753214681&language=zh_cn";
         JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
 
