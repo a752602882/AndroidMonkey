@@ -46,8 +46,9 @@ public class MyApplication extends Application {
         db = DotaMaxDB.getInstance(content);
 
         //把英雄放进数据库
-        while(db.loadHeroes()==null)
-          HttpReadHeroes();
+        //while(db.loadHeroes()==null)
+
+         // HttpReadHeroes();
 
 
 

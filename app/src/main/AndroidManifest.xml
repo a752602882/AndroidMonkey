@@ -2,6 +2,7 @@
     package="dome.ninebox.com.androidmonkey">
 
 
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
