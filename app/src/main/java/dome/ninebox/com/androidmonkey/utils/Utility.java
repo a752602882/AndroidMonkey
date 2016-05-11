@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
 
@@ -26,8 +27,8 @@ public class Utility {
     public synchronized static boolean handleHeroesResponse(DotaMaxDB dotaMaxDB,JSONObject response){
 
 
-
-      /*  try {
+        List<Heroes> list = new ArrayList<Heroes>();
+        try {
             JSONObject josn =  response;
             JSONArray jsonArray = josn.getJSONObject("result").getJSONArray("heroes");
 
@@ -41,11 +42,10 @@ public class Utility {
                 hero.setName(name);
                 hero.setId(id);
                 hero.setLocalized_name(localized_name);
-
-                dotaMaxDB.saveHeroes(hero);
-
+                list.add(hero);
             }
 
+          dotaMaxDB.saveHeroes(list);
 
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -53,7 +53,7 @@ public class Utility {
         }
 
 
-        */
+
 
 
         return true;
@@ -81,7 +81,7 @@ public class Utility {
 
                 matches.add(match_id);
 
-                //    dotaMaxDB.saveHeroes(hero);
+                //   dotaMaxDB.saveHeroes(hero);
 
             }
 

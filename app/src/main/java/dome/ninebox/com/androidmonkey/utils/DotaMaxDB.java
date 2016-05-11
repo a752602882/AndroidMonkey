@@ -25,7 +25,7 @@ public class DotaMaxDB {
     /**
      * 数据库版本
      */
-    public static final int VERSION = 1;
+    public static final int VERSION = 3;
 
     private static DotaMaxDB dotaMaxDB;
 
@@ -58,32 +58,47 @@ public class DotaMaxDB {
      */
 
 
-    public void saveHeroes(Heroes hero) {
+    public void saveHeroes(List<Heroes> hero) {
 
-
+        db.beginTransaction();
         try{
             //在这里执行多个数据库操作
             //执行过程中可能会抛出异常
-            for (int i=0; i<1000; i++) {
+            if (hero.size()>0) {
+                for (int i = 0; i < hero.size(); i++) {
 
-                String sql = "insert into Heroes values ("+ hero.getId()+ "," + hero.getName()+ ","+ hero.getLocalized_name()+")";
 
-                System.out.println(sql);
+                    ContentValues values = new ContentValues();
+                    values.put("id", hero.get(i).getId());
+                    values.put("name", hero.get(i).getName());
+                    values.put("localized_name", hero.get(i).getLocalized_name());
 
-                db.execSQL(sql);
+                    db.insert("Heroes", null, values);
 
+
+//                String sql = "insert into Heroes values ("+ hero.get(i).getId()+ "," +  hero.get(i)+ ","+  hero.get(i).getLocalized_name()+")";
+//
+//                System.out.println(sql);
+//
+//                db.execSQL(sql);
+
+                }
+
+                db.setTransactionSuccessful();
             }
-
-            db.setTransactionSuccessful();
             //在setTransactionSuccessful和endTransaction之间不进行任何数据库操作
         }catch(Exception e){
             //当数据库操作出现错误时，需要捕获异常，结束事务
             db.endTransaction();
             throw e;
+        }finally{
+            db.endTransaction(); //处理完成
+            db.close();
+
         }
         //当所有操作执行完成后结束一个事务
-        db.endTransaction();
 
+       // db.endTransaction();
 
 
 

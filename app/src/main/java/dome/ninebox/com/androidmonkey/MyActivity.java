@@ -80,7 +80,14 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         HttpReadMatches();
 
         //从服务器读取1场比赛的详细信息
-      //  HttpReadMatchDetails();
+     /*   for (String match : matches) {
+
+                System.out.print(match + "\t");
+                HttpReadMatchDetails(match);
+            }
+*/
+
+
 
         // 初始化mTitles、mFragments等ViewPager需要的数据
         //这里的数据都是模拟出来了，自己手动生成的，在项目中需要从网络获取数据
@@ -153,7 +160,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    private void HttpReadMatches() {
+    private void  HttpReadMatches() {
         RequestQueue mQueue = Volley.newRequestQueue(this);
         String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?" +
                 "key=BAA464D3B432D062BEA99BA753214681&matches_requested=25&account_id=125690482";
@@ -164,7 +171,12 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                     public void onResponse(JSONObject response) {
                         System.out.println("请求英雄成功！response--" + response.toString());
                         matches=  Utility.handleMatchesResponse(response);
-                        if (matches==null)
+                       if (matches.size()==25) {
+                           VolleyLog.d("Matches", "请求成功");
+
+
+                       }
+                           if (matches==null)
                             VolleyLog.d("Matches", "matches read error");
 
                         // Utility.handleWeatherResponse(WeatherActivity.this, response);
@@ -181,20 +193,20 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    private void HttpReadMatchDetails() {
+    private void HttpReadMatchDetails(String match) {
         RequestQueue mQueue = Volley.newRequestQueue(this);
         String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails" +
-                "/V001/?key=BAA464D3B432D062BEA99BA753214681&match_id=2339569073";
+                "/V001/?key=BAA464D3B432D062BEA99BA753214681&match_id=" +match;
         JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.out.println("请求英雄成功！response--" + response.toString());
+                        System.out.println("请求单场数据成功！response--" + response.toString());
 
                         matchDetailses=  Utility.handleMatchDetailsResponse(response);
                         if (matches==null)
-                            VolleyLog.d("Matches","matches read error");
+                            VolleyLog.d("Matches","请求单场数据成功");
 
                         // Utility.handleWeatherResponse(WeatherActivity.this, response);
 
