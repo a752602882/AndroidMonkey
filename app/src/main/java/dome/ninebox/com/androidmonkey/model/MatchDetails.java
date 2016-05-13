@@ -1,16 +1,20 @@
 package dome.ninebox.com.androidmonkey.model;
 
+import java.util.Observable;
+
 /**
  * Created by Administrator on 2016/5/4.
  */
+//被监听者，数据发生改变时
 public class MatchDetails {
 
-    private  String match_id;
+
+    private  long match_id;
 
 
 
-    private  String account_id;
-    private  String start_time;
+    private  long account_id;
+    private  int start_time;
     private  int player_slot;
     private  int hero_id;
 
@@ -40,28 +44,28 @@ public class MatchDetails {
     private  boolean radiant_win;  //false夜宴胜利 true天辉胜利
 
 
-
-    public String getAccount_id() {
+    public long getAccount_id() {
         return account_id;
     }
 
-    public void setAccount_id(String account_id) {
+    public void setAccount_id(long account_id) {
         this.account_id = account_id;
     }
 
-    public String getMatch_id() {
+    public long getMatch_id() {
         return match_id;
     }
 
-    public void setMatch_id(String match_id) {
+    public void setMatch_id(long match_id) {
         this.match_id = match_id;
+
     }
 
-    public String getStart_time() {
+    public int getStart_time() {
         return start_time;
     }
 
-    public void setStart_time(String start_time) {
+    public void setStart_time(int start_time) {
         this.start_time = start_time;
     }
 
@@ -209,6 +213,8 @@ public class MatchDetails {
         this.radiant_win = radiant_win;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "MatchDetails [setMatch_id="+match_id;
+    }
 }

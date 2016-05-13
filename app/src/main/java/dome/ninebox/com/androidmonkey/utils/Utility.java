@@ -1,9 +1,15 @@
 package dome.ninebox.com.androidmonkey.utils;
 
+import android.app.Activity;
 import android.text.TextUtils;
 
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +26,51 @@ import dome.ninebox.com.androidmonkey.model.MatchDetails;
  * Created by Administrator on 2016/5/4.
  */
 public class Utility {
+
+
+
+    //返回方法
+    public interface VolleyCallback{
+        void onSuccess(JSONObject result);
+    }
+
+
+
+    //读取个人25场网络数据
+    public synchronized static void HttpReadMatches(Activity activity, final VolleyCallback callback) {
+
+        RequestQueue mQueue = Volley.newRequestQueue(activity);
+        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?" +
+                "key=BAA464D3B432D062BEA99BA753214681&matches_requested=25&account_id=125690482";
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("请求英雄成功！response--" + response.toString());
+                     //  Utility.handleMatchesResponse(response);
+                        callback.onSuccess(response);
+                        }
+
+
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("请求mathes失败！ error--"+error);
+            }
+        });
+        mQueue.add(jsonRequest);
+
+    }
+
+
+
+
+
+
+
+
 
     /**
      * 解析和处理服务器返回的英雄数据
@@ -91,28 +142,59 @@ public class Utility {
 
         return matches;
     }
+    //这个是一场比赛的详情
+    public synchronized static  void HttpReadMatchDetails(String match,Activity activity, final VolleyCallback callback) {
+        RequestQueue mQueue = Volley.newRequestQueue(activity);
+        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails" +
+                "/V001/?key=BAA464D3B432D062BEA99BA753214681&match_id=" +match;
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
 
-    public synchronized static List<MatchDetails> handleMatchDetailsResponse(JSONObject response) {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("请求单场数据成功！response--" + response.toString());
+
+                       // matchDetailses=  Utility.handleMatchDetailsResponse(response);
+                        callback.onSuccess(response);
 
 
-        List<MatchDetails> list = null;
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("请求mathes失败！ error--"+error);
+            }
+        });
+        mQueue.add(jsonRequest);
+    }
+
+
+    public  static List<MatchDetails> handleMatchDetailsResponse(JSONObject response) {
+
+
+        List<MatchDetails> list = new ArrayList<MatchDetails>();;
         int start_time;
-        String match_id=null;
+        long match_id;
         boolean radiant_win;
         try {
             JSONObject josn =  response;
             JSONObject matchesExternal =josn.getJSONObject("result");
-             // start_time = (int)matchesExternal.get("start_time");
-             // match_id = (String)matchesExternal.get("match_id");
-             //radiant_win=(boolean)matchesExternal.get("radiant_win");
+              start_time = (int)matchesExternal.get("start_time");
+              match_id = (long)matchesExternal.get("match_id");
+             radiant_win=(boolean)matchesExternal.get("radiant_win");
 
             JSONArray jsonArray = josn.getJSONObject("result").getJSONArray("players");
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject player = (JSONObject) jsonArray.get(i) ;
-             //   String account_id = (String)player.get("account_id");
+                System.out.print("----------------------------------------------");
+                System.out.print(player.get("account_id").getClass().getName());;
+
+               long account_id =new Long((Integer)player.get("account_id")) ;
+
               //  String start_time = (String)player.get("start_time");
-            //    String start_time = (String)player.get("match_id");
+              //  String start_time = (String)player.get("match_id");
                 int player_slot = (int)player.get("player_slot");
                 int hero_id = (int)player.get("hero_id");
                 int item_0 = (int)player.get("item_0");
@@ -135,7 +217,7 @@ public class Utility {
                 //int  radiant_win= (int)player.get("radiant_win");
 
                 MatchDetails md = new MatchDetails();
-              //  md.setAccount_id(account_id);
+               // md.setAccount_id(account_id);
                 md.setHero_id(hero_id);
                 md.setPlayer_slot(player_slot);
                 md.setItem_0(item_0);
@@ -154,9 +236,9 @@ public class Utility {
                 md.setGold_per_min(gold_per_min);
                 md.setXp_per_min(xp_per_min);
 
-                //md.setStart_time(start_time);
-            //    md.setMatch_id(match_id);
-            //    md.setRadiant_win(radiant_win);
+                md.setStart_time(start_time);
+               md.setMatch_id(match_id);
+               md.setRadiant_win(radiant_win);
                 list.add(md);
             }
 

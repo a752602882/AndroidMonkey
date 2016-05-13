@@ -2,6 +2,8 @@ package dome.ninebox.com.androidmonkey;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -33,14 +35,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.logging.LogRecord;
+
 import dome.ninebox.com.androidmonkey.adapter.MyViewPagerAdapter;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.utils.MyObserver;
 import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
 import dome.ninebox.com.androidmonkey.utils.Utility;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 
-public class MyActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
+public class MyActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener{
 
     //初始化各种控件，照着xml中的顺序写
     private DrawerLayout mDrawerLayout;
@@ -51,6 +56,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     private ViewPager mViewPager;
     private FloatingActionButton mFloatingActionButton;
     private NavigationView mNavigationView;
+
 
 
     // TabLayout中的tab标题
@@ -65,8 +71,13 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
      */
     private GoogleApiClient client;
 
-    private static List<String> matches;
+
     private static List<MatchDetails> matchDetailses;
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +87,11 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         // 初始化各种控件
         initViews();
 
-        //从服务器读取最新的25场比赛ID
-        HttpReadMatches();
+
+
+
+
+
 
         //从服务器读取1场比赛的详细信息
      /*   for (String match : matches) {
@@ -160,68 +174,11 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    private void  HttpReadMatches() {
-        RequestQueue mQueue = Volley.newRequestQueue(this);
-        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?" +
-                "key=BAA464D3B432D062BEA99BA753214681&matches_requested=25&account_id=125690482";
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
-                new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        System.out.println("请求英雄成功！response--" + response.toString());
-                        matches=  Utility.handleMatchesResponse(response);
-                       if (matches.size()==25) {
-                           VolleyLog.d("Matches", "请求成功");
+/*
 
 
-                       }
-                           if (matches==null)
-                            VolleyLog.d("Matches", "matches read error");
-
-                        // Utility.handleWeatherResponse(WeatherActivity.this, response);
-
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("请求mathes失败！ error--"+error);
-            }
-        });
-        mQueue.add(jsonRequest);
-
-    }
-
-    private void HttpReadMatchDetails(String match) {
-        RequestQueue mQueue = Volley.newRequestQueue(this);
-        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails" +
-                "/V001/?key=BAA464D3B432D062BEA99BA753214681&match_id=" +match;
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        System.out.println("请求单场数据成功！response--" + response.toString());
-
-                        matchDetailses=  Utility.handleMatchDetailsResponse(response);
-                        if (matches==null)
-                            VolleyLog.d("Matches","请求单场数据成功");
-
-                        // Utility.handleWeatherResponse(WeatherActivity.this, response);
-
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("请求mathes失败！ error--"+error);
-            }
-        });
-        mQueue.add(jsonRequest);
-    }
-
-
+*/
     /**
      * 设置NavigationView中menu的item被选中后要执行的操作
      *
@@ -273,6 +230,55 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     }
 
 
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            // FloatingActionButton的点击事件
+            case R.id.id_floatingactionbutton:
+                SnackbarUtil.show(v, getString(R.string.plusone), 0);
+                break;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+*   ******************************************************************************************
+*   ******************************************************************************************
+*   ******************************************************************************************
+*   ******************************************************************************************
+ */
+
+
+
+
+
+
+    /*
+    * 系统自带你的东西，不用看
+    *
+    * */
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_my, menu);
@@ -290,16 +296,6 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         return super.onOptionsItemSelected(item);
     }
 
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            // FloatingActionButton的点击事件
-            case R.id.id_floatingactionbutton:
-                SnackbarUtil.show(v, getString(R.string.plusone), 0);
-                break;
-        }
-    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -355,4 +351,5 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
+
 }
