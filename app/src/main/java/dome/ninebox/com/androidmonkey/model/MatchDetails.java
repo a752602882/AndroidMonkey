@@ -3,14 +3,12 @@ package dome.ninebox.com.androidmonkey.model;
 /**
  * Created by Administrator on 2016/5/4.
  */
-public class MatchDetails {
+public class MatchDetails{
 
-    private  String match_id;
+    private  long match_id;
+    private  long account_id;
+    private  long start_time;
 
-
-
-    private  String account_id;
-    private  String start_time;
     private  int player_slot;
     private  int hero_id;
 
@@ -32,6 +30,15 @@ public class MatchDetails {
 
     private  int level;
 
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
     //  private  List<?>String ability_upgrades;暂时不用 加点
 
     private  int gold_per_min;
@@ -40,28 +47,27 @@ public class MatchDetails {
     private  boolean radiant_win;  //false夜宴胜利 true天辉胜利
 
 
-
-    public String getAccount_id() {
-        return account_id;
-    }
-
-    public void setAccount_id(String account_id) {
-        this.account_id = account_id;
-    }
-
-    public String getMatch_id() {
+    public long getMatch_id() {
         return match_id;
     }
 
-    public void setMatch_id(String match_id) {
+    public void setMatch_id(long match_id) {
         this.match_id = match_id;
     }
 
-    public String getStart_time() {
+    public long getAccount_id() {
+        return account_id;
+    }
+
+    public void setAccount_id(long account_id) {
+        this.account_id = account_id;
+    }
+
+    public long getStart_time() {
         return start_time;
     }
 
-    public void setStart_time(String start_time) {
+    public void setStart_time(long start_time) {
         this.start_time = start_time;
     }
 
@@ -209,6 +215,30 @@ public class MatchDetails {
         this.radiant_win = radiant_win;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "MatchDetails{" +
+                "match_id='" + match_id + '\'' +
+                ", account_id='" + account_id + '\'' +
+                ", start_time='" + start_time + '\'' +
+                ", player_slot=" + player_slot +
+                ", hero_id=" + hero_id +
+                ", item_0=" + item_0 +
+                ", item_1=" + item_1 +
+                ", item_2=" + item_2 +
+                ", item_3=" + item_3 +
+                ", item_4=" + item_4 +
+                ", item_5=" + item_5 +
+                ", kills=" + kills +
+                ", deaths=" + deaths +
+                ", assists=" + assists +
+                ", hero_damage=" + hero_damage +
+                ", tower_damage=" + tower_damage +
+                ", hero_healing=" + hero_healing +
+                ", level=" + level +
+                ", gold_per_min=" + gold_per_min +
+                ", xp_per_min=" + xp_per_min +
+                ", radiant_win=" + radiant_win +
+                '}';
+    }
 }

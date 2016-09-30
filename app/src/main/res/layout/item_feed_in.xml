@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="1"
         >
@@ -27,53 +28,23 @@
             />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="1"
             >
 
-            <ImageView
-                android:id="@+id/player0"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_red"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_blue_light"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_black"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/item_green"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player4"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_red"
-                android:scaleType="centerCrop" />
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="1"
         >
@@ -94,46 +65,16 @@
             />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="1"
             >
 
-            <ImageView
-                android:id="@+id/player5"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_red"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player6"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_blue_light"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player7"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_black"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player8"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/item_green"
-                android:scaleType="centerCrop" />
-            <ImageView
-                android:id="@+id/player9"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="@color/main_red"
-                android:scaleType="centerCrop" />
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
+            <include layout="@layout/item_feed_in_match_info"/>
         </LinearLayout>
 
     </LinearLayout>

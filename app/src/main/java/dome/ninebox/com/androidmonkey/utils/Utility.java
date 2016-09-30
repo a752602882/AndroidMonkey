@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import dome.ninebox.com.androidmonkey.MyApplication;
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
 
@@ -20,44 +21,6 @@ import dome.ninebox.com.androidmonkey.model.MatchDetails;
  */
 public class Utility {
 
-    /**
-     * 解析和处理服务器返回的英雄数据
-     */
-    public synchronized static boolean handleHeroesResponse(DotaMaxDB dotaMaxDB,JSONObject response){
-
-
-
-      /*  try {
-            JSONObject josn =  response;
-            JSONArray jsonArray = josn.getJSONObject("result").getJSONArray("heroes");
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject user = (JSONObject) jsonArray.get(i) ;
-                String name = (String)user.get("name");
-                int id  = (int)user.get("id");
-                String localized_name= (String)user.get("localized_name");
-
-                Heroes  hero = new Heroes();
-                hero.setName(name);
-                hero.setId(id);
-                hero.setLocalized_name(localized_name);
-
-                dotaMaxDB.saveHeroes(hero);
-
-            }
-
-
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-
-        */
-
-
-        return true;
-    }
 
     /**
      * 解析和处理服务器返回的25场比赛简单数据，并返回一个matches集合
@@ -92,29 +55,38 @@ public class Utility {
         return matches;
     }
 
-    public synchronized static List<MatchDetails> handleMatchDetailsResponse(JSONObject response) {
+    /**
+     * 解析一场比赛的 详细信息，
+     * @param response
+     * @return  返回一场比赛中十个玩家的详细信息
+     */
+    public  static List<MatchDetails> handleMatchDetailsResponse(JSONObject response) {
 
 
-        List<MatchDetails> list = null;
-        int start_time;
-        String match_id=null;
-        boolean radiant_win;
+        List<MatchDetails> match= new ArrayList<MatchDetails>();
         try {
             JSONObject josn =  response;
             JSONObject matchesExternal =josn.getJSONObject("result");
-             // start_time = (int)matchesExternal.get("start_time");
-             // match_id = (String)matchesExternal.get("match_id");
-             //radiant_win=(boolean)matchesExternal.get("radiant_win");
+            long start_time =  matchesExternal.getLong("start_time");
+            long match_id   =  matchesExternal.getLong("match_id");
+            boolean radiant_win= matchesExternal.getBoolean("radiant_win");
 
             JSONArray jsonArray = josn.getJSONObject("result").getJSONArray("players");
 
             for (int i = 0; i < jsonArray.length(); i++) {
+
+                MatchDetails md = new MatchDetails();
                 JSONObject player = (JSONObject) jsonArray.get(i) ;
-             //   String account_id = (String)player.get("account_id");
-              //  String start_time = (String)player.get("start_time");
-            //    String start_time = (String)player.get("match_id");
+                long account_id = player.getLong("account_id");
+               /* long start_time = player.getLong("start_time");
+                long match_id = player.getLong("match_id");*/
                 int player_slot = (int)player.get("player_slot");
                 int hero_id = (int)player.get("hero_id");
+
+                DotaMaxDAO db = MyApplication.getDb();
+                Heroes heroes = db.getHeroes(hero_id);
+
+
                 int item_0 = (int)player.get("item_0");
                 int item_1 = (int)player.get("item_1");
                 int item_2 = (int)player.get("item_2");
@@ -132,11 +104,26 @@ public class Utility {
                 int gold_per_min = (int)player.get("gold_per_min");
                 int xp_per_min = (int)player.get("xp_per_min");
 
-                //int  radiant_win= (int)player.get("radiant_win");
+                if(radiant_win){
+                    if (player_slot>5)
+                        md.setRadiant_win(true);
+                    else
+                        md.setRadiant_win(false);
+                }else{
+                    if (player_slot>5)
+                        md.setRadiant_win(false);
+                    else
+                        md.setRadiant_win(true);
+                }
 
-                MatchDetails md = new MatchDetails();
-              //  md.setAccount_id(account_id);
+
+
+
+                md.setAccount_id(account_id);
                 md.setHero_id(hero_id);
+
+                //设置imageUrl
+                md.setImageUrl(heroes.getName());
                 md.setPlayer_slot(player_slot);
                 md.setItem_0(item_0);
                 md.setItem_1(item_1);
@@ -154,10 +141,11 @@ public class Utility {
                 md.setGold_per_min(gold_per_min);
                 md.setXp_per_min(xp_per_min);
 
-                //md.setStart_time(start_time);
-            //    md.setMatch_id(match_id);
-            //    md.setRadiant_win(radiant_win);
-                list.add(md);
+                md.setStart_time(start_time);
+                md.setMatch_id(match_id);
+
+                match.add(md);
+                md.toString();
             }
 
 
@@ -168,6 +156,38 @@ public class Utility {
 
 
 
-        return  list;
+        return  match;
+    }
+
+    public  static void handleHeroesResponse(DotaMaxDAO db, JSONObject response) {
+
+        List<Heroes> heroesList = new ArrayList<Heroes>();
+        try {
+            JSONObject josn =  response;
+            JSONArray jsonArray = josn.getJSONObject("result").getJSONArray("heroes");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject user = (JSONObject) jsonArray.get(i) ;
+
+                String name = (String)user.get("name");
+                String tName = name.replace("npc_dota_hero_","");
+                name ="http://cdn.dota2.com/apps/dota2/images/heroes/"+tName+ "_sb.png";
+
+
+                int id  = (int)user.get("id");
+                String localized_name= (String)user.get("localized_name");
+                Heroes  hero = new Heroes();
+                hero.setName(name);
+                hero.setId(id);
+                hero.setLocalized_name(localized_name);
+                heroesList.add(hero);
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        db.insertHeroes(heroesList);
+
+
     }
 }

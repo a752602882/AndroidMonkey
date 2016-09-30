@@ -10,15 +10,15 @@ import dome.ninebox.com.androidmonkey.R;
 /**
  * Created by Administrator on 2016/4/25.
  */
-public class MyRecyclerViewHolder extends RecyclerView.ViewHolder {
+    public class MyRecyclerViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView mTextView;
-    public ImageView ivFeedCenter;
+
+    public ImageView hero_image;
     public ImageView ivFeedBottom;
     public MyRecyclerViewHolder(View itemView) {
         super(itemView);
-        mTextView = (TextView) itemView.findViewById(R.id.id_textview);
-       // ivFeedCenter = (ImageView) itemView.findViewById(R.id.ivFeedCenter);
-        ivFeedBottom = (ImageView) itemView.findViewById(R.id.ivFeedBottom);
+
+        hero_image = (ImageView) itemView.findViewById(R.id.hero_image);
+      //  ivFeedBottom = (ImageView) itemView.findViewById(R.id.ivFeedBottom);
     }
 }

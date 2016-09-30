@@ -49,7 +49,7 @@ public class MyStaggeredViewAdapter extends RecyclerView.Adapter<MyRecyclerViewH
     @Override
     public void onBindViewHolder(final MyRecyclerViewHolder holder, final int position) {
 
-        if (mOnItemClickListener!=null){
+/*        if (mOnItemClickListener!=null){
             holder.mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -68,12 +68,12 @@ public class MyStaggeredViewAdapter extends RecyclerView.Adapter<MyRecyclerViewH
                 }
             });
 
-        }
+        }*/
 
-        ViewGroup.LayoutParams mLayoutParams = holder.mTextView.getLayoutParams();
-        mLayoutParams.height= mHeights.get(position);
-        holder.mTextView.setLayoutParams(mLayoutParams);
-        holder.mTextView.setText(mDatas.get(position));
+      //  ViewGroup.LayoutParams mLayoutParams = holder.mTextView.getLayoutParams();
+      //  mLayoutParams.height= mHeights.get(position);
+     //   holder.mTextView.setLayoutParams(mLayoutParams);
+     //   holder.mTextView.setText(mDatas.get(position));
 
     }
 

@@ -1,6 +1,7 @@
 package dome.ninebox.com.androidmonkey;
 
-import android.net.Uri;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -8,49 +9,51 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import dome.ninebox.com.androidmonkey.adapter.MyViewPagerAdapter;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.service.MatchIntentService;
 import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
-import dome.ninebox.com.androidmonkey.utils.Utility;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 
 public class MyActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
+
+    @BindView(R.id.id_toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.id_tablayout)
+    TabLayout mTabLayout;
+    @BindView(R.id.id_appbarlayout)
+    AppBarLayout mAppBarLayout;
+    @BindView(R.id.id_viewpager)
+    ViewPager mViewPager;
+    @BindView(R.id.id_floatingactionbutton)
+    FloatingActionButton mFloatingActionButton;
+    @BindView(R.id.id_coordinatorlayout)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.id_navigationview)
+    NavigationView mNavigationView;
+    @BindView(R.id.id_drawerlayout)
+    DrawerLayout mDrawerLayout;
     //初始化各种控件，照着xml中的顺序写
-    private DrawerLayout mDrawerLayout;
-    private CoordinatorLayout mCoordinatorLayout;
-    private AppBarLayout mAppBarLayout;
-    private Toolbar mToolbar;
-    private TabLayout mTabLayout;
-    private ViewPager mViewPager;
-    private FloatingActionButton mFloatingActionButton;
-    private NavigationView mNavigationView;
 
 
     // TabLayout中的tab标题
@@ -59,28 +62,30 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     private List<Fragment> mFragments;
     // ViewPager的数据适配器
     private MyViewPagerAdapter mViewPagerAdapter;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+
+
 
     private static List<String> matches;
     private static List<MatchDetails> matchDetailses;
+
+    private RequestQueue mRequestQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        ButterKnife.bind(this);
 
-        // 初始化各种控件
-        initViews();
+
+        mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
 
         //从服务器读取最新的25场比赛ID
-        HttpReadMatches();
+        // HttpReadMatches();
 
         //从服务器读取1场比赛的详细信息
-      //  HttpReadMatchDetails();
+        //  HttpReadMatchDetails();
 
         // 初始化mTitles、mFragments等ViewPager需要的数据
         //这里的数据都是模拟出来了，自己手动生成的，在项目中需要从网络获取数据
@@ -89,9 +94,11 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         // 对各种控件进行设置、适配、填充数据
         configViews();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+       Intent intent = new Intent(this,MatchIntentService.class);
+       intent.putExtra("URL","https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAA464D3B432D062BEA99BA753214681&matches_requested=2&account_id=125690482");
+       startService(intent);
+
+
     }
 
     private void initData() {
@@ -153,62 +160,6 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    private void HttpReadMatches() {
-        RequestQueue mQueue = Volley.newRequestQueue(this);
-        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?" +
-                "key=BAA464D3B432D062BEA99BA753214681&matches_requested=25&account_id=125690482";
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        System.out.println("请求英雄成功！response--" + response.toString());
-                        matches=  Utility.handleMatchesResponse(response);
-                        if (matches==null)
-                            VolleyLog.d("Matches", "matches read error");
-
-                        // Utility.handleWeatherResponse(WeatherActivity.this, response);
-
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("请求mathes失败！ error--"+error);
-            }
-        });
-        mQueue.add(jsonRequest);
-
-    }
-
-    private void HttpReadMatchDetails() {
-        RequestQueue mQueue = Volley.newRequestQueue(this);
-        String url ="https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails" +
-                "/V001/?key=BAA464D3B432D062BEA99BA753214681&match_id=2339569073";
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        System.out.println("请求英雄成功！response--" + response.toString());
-
-                        matchDetailses=  Utility.handleMatchDetailsResponse(response);
-                        if (matches==null)
-                            VolleyLog.d("Matches","matches read error");
-
-                        // Utility.handleWeatherResponse(WeatherActivity.this, response);
-
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("请求mathes失败！ error--"+error);
-            }
-        });
-        mQueue.add(jsonRequest);
-    }
-
 
     /**
      * 设置NavigationView中menu的item被选中后要执行的操作
@@ -249,45 +200,8 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         });
     }
 
-    private void initViews() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawerlayout);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.id_coordinatorlayout);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.id_appbarlayout);
-        mToolbar = (Toolbar) findViewById(R.id.id_toolbar);
-        mTabLayout = (TabLayout) findViewById(R.id.id_tablayout);
-        mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
-        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.id_floatingactionbutton);
-        mNavigationView = (NavigationView) findViewById(R.id.id_navigationview);
-    }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_my, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-      /*  int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }*/
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            // FloatingActionButton的点击事件
-            case R.id.id_floatingactionbutton:
-                SnackbarUtil.show(v, getString(R.string.plusone), 0);
-                break;
-        }
-    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -304,43 +218,18 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "My Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://dome.ninebox.com.androidmonkey/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
+    @OnClick({R.id.id_tablayout, R.id.id_floatingactionbutton})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.id_tablayout:
+                break;
+            case R.id.id_floatingactionbutton:
+                break;
+        }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "My Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://dome.ninebox.com.androidmonkey/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
+
+
 }
