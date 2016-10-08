@@ -46,8 +46,8 @@ public class MyApplication extends Application {
         db = new DotaMaxDAOImpl(content);
 
         //把英雄放进数据库
-       // while(db.getHeroes()==null)
-        //HttpReadHeroes();// 暂时不需要
+      //  while(db.getHeroes(101)==null)
+     //   HttpReadHeroes();// 暂时不需要
 
       mRequestQueue = Volley.newRequestQueue(getApplicationContext());
 

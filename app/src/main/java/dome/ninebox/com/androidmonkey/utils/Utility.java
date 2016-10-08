@@ -1,6 +1,5 @@
 package dome.ninebox.com.androidmonkey.utils;
 
-import android.text.TextUtils;
 
 
 import com.android.volley.VolleyLog;
@@ -106,14 +105,14 @@ public class Utility {
 
                 if(radiant_win){
                     if (player_slot>5)
-                        md.setRadiant_win(true);
+                        md.setRadiant_win(1);
                     else
-                        md.setRadiant_win(false);
+                        md.setRadiant_win(0);
                 }else{
                     if (player_slot>5)
-                        md.setRadiant_win(false);
+                        md.setRadiant_win(0);
                     else
-                        md.setRadiant_win(true);
+                        md.setRadiant_win(1);
                 }
 
 
@@ -143,7 +142,6 @@ public class Utility {
 
                 md.setStart_time(start_time);
                 md.setMatch_id(match_id);
-
                 match.add(md);
                 md.toString();
             }

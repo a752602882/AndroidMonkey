@@ -10,12 +10,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -30,14 +26,12 @@ import android.view.ViewGroup;
 import org.json.JSONObject;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +44,7 @@ import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
 import dome.ninebox.com.androidmonkey.service.MatchIntentService;
 import dome.ninebox.com.androidmonkey.utils.DotaMaxDAO;
+import dome.ninebox.com.androidmonkey.utils.DotaMaxDAOImpl;
 import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
 import dome.ninebox.com.androidmonkey.utils.Utility;
 import dome.ninebox.com.androidmonkey.widget.MessageResponse;
@@ -88,12 +83,8 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
     private Set<MatchInfoTask> taskCollection = new HashSet<>();
 
 
-    private Set<List<MatchDetails>> matchDetails = new HashSet<>();
-    private List<List<MatchDetails>> listMatchDetails = new ArrayList<>();
-
     private List<MatchDetails> mUserDetails = new ArrayList<>();
 
-    private static final int URL_LOADER = 0;
 
     @Nullable
     @Override
@@ -195,20 +186,19 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
     @Override
     public void onReceivedSuccess(List<MatchDetails> msg) {
 
-        final Map<MatchDetails,Heroes> listHeroes = new HashMap<>();
+        final Map<MatchDetails, Heroes> listHeroes = new HashMap<>();
 
         for (MatchDetails details : msg) {
             if (details.getAccount_id() == 125690482) {
                 mUserDetails.add(details);
+                new DotaMaxDAOImpl(getContext()).insertMatch(details);
             }
 
         }
 
-      //  mRecyclerViewAdapter.notifyDataSetChanged();
+        //  mRecyclerViewAdapter.notifyDataSetChanged();
         //  cancelAllTasks();
     }
-
-
 
 
     class MyBroadcast extends BroadcastReceiver {
@@ -224,13 +214,14 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
                 MatchInfoTask task = new MatchInfoTask();
                 task.setResponse(MyFragment.this);
                 taskCollection.add(task);
-                task.execute(ids.get(i));
+                if (new DotaMaxDAOImpl(getContext()).getMatch(Integer.parseInt(ids.get(i))) == null) {
+                    task.execute(ids.get(i));
+                }
             }
 
         }
 
     }
-
 
 
     class MatchInfoTask extends AsyncTask<String, Void, List<MatchDetails>> {

@@ -42,9 +42,27 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
             + "localized_name text)";
     public static final String CREATE_MATCH = "create table Match ("
             + "hid integer primary key autoincrement, "
-            + "id integer, "
-            + "province_name text, "
-            + "province_code text)";
+            + "match_id integer, "
+            + "account_id integer, "
+            + "start_time integer, "
+            + "player_slot integer, "
+            + "item_0 integer, "
+            + "item_1 integer, "
+            + "item_2 integer, "
+            + "item_3 integer, "
+            + "item_4 integer, "
+            + "item_5 integer, "
+            + "kills integer, "
+            + "deaths integer, "
+            + "assists integer, "
+            + "hero_damage integer, "
+            + "tower_damage integer, "
+            + "hero_healing integer, "
+            + "level integer, "
+            + "gold_per_min integer, "
+            + "xp_per_min integer, "
+            + "radiant_win integer, "
+            + "imageUrl text)";
     private static final String DROP_HEROES="drop table if exists Heroes";
     private static final String DROP_MATCH="drop table if exists Match";
 

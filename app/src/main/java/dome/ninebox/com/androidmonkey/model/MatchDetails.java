@@ -44,7 +44,7 @@ public class MatchDetails{
     private  int gold_per_min;
     private  int xp_per_min;
 
-    private  boolean radiant_win;  //false夜宴胜利 true天辉胜利
+    private  int radiant_win;  //false夜宴胜利 true天辉胜利
 
 
     public long getMatch_id() {
@@ -207,11 +207,11 @@ public class MatchDetails{
         this.xp_per_min = xp_per_min;
     }
 
-    public boolean isRadiant_win() {
+    public int getRadiant_win() {
         return radiant_win;
     }
 
-    public void setRadiant_win(boolean radiant_win) {
+    public void setRadiant_win(int radiant_win) {
         this.radiant_win = radiant_win;
     }
 
