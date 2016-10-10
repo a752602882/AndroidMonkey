@@ -47,7 +47,7 @@ public class MyApplication extends Application {
 
         //把英雄放进数据库
       //  while(db.getHeroes(101)==null)
-     //   HttpReadHeroes();// 暂时不需要
+        HttpReadHeroes();// 暂时不需要
 
       mRequestQueue = Volley.newRequestQueue(getApplicationContext());
 

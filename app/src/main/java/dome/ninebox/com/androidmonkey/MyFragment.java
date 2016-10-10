@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import dome.ninebox.com.androidmonkey.adapter.MyRecyclerViewAdapter;
 import dome.ninebox.com.androidmonkey.adapter.MyStaggeredViewAdapter;
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.provider.MatchDetailsProvider;
 import dome.ninebox.com.androidmonkey.service.MatchIntentService;
 import dome.ninebox.com.androidmonkey.utils.DotaMaxDAO;
 import dome.ninebox.com.androidmonkey.utils.DotaMaxDAOImpl;
@@ -86,6 +88,8 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
     private List<MatchDetails> mUserDetails = new ArrayList<>();
 
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -93,10 +97,7 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
         mView = inflater.inflate(R.layout.frag_main, container, false);
         ButterKnife.bind(this, mView);
 
-        //注册广播接收器
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MatchIntentService.BROADCAST_ACTION);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcast, filter);
+
         return mView;
 
 
@@ -124,6 +125,10 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
         switch (flag) {
             case VERTICAL_LIST:
                 mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                //注册广播接收器
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(MatchIntentService.BROADCAST_ACTION);
+                LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcast, filter);
                 break;
             case HORIZONTAL_LIST:
                 mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -140,7 +145,12 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
         }
 
         if (flag != STAGGERED_GRID) {
-            mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity(), mUserDetails);
+            if (mRecyclerViewAdapter == null) {
+
+                Cursor c =getActivity().getContentResolver().query(MatchDetailsProvider.URI_DOTA_ALL, null, null, null, null);
+                mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity(), c, 1);
+            }
+
             mRecyclerViewAdapter.setmOnItemClickListener(this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         } else {
@@ -191,7 +201,7 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
         for (MatchDetails details : msg) {
             if (details.getAccount_id() == 125690482) {
                 mUserDetails.add(details);
-                new DotaMaxDAOImpl(getContext()).insertMatch(details);
+                MyApplication.getDb().insertMatch(details);
             }
 
         }
@@ -207,16 +217,25 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
         public void onReceive(Context context, Intent intent) {
             List<String> ids = new ArrayList<>();
             ids = intent.getStringArrayListExtra(MatchIntentService.EXTENDED_DATA);
-            Log.d("TAG", "++++++");
-
+            Log.d("TAG", "++++你好++++");
+            DotaMaxDAO dao = MyApplication.getDb();
 
             for (int i = 0; i < ids.size(); i++) {
-                MatchInfoTask task = new MatchInfoTask();
-                task.setResponse(MyFragment.this);
-                taskCollection.add(task);
-                if (new DotaMaxDAOImpl(getContext()).getMatch(Integer.parseInt(ids.get(i))) == null) {
-                    task.execute(ids.get(i));
+
+                try {
+                    long intNum=Long.parseLong(ids.get(i).trim());
+                    Log.d("TAG", "intNum: "+intNum);
+                    if (dao.getMatch(intNum) == null) {
+                        MatchInfoTask task = new MatchInfoTask();
+                        task.setResponse(MyFragment.this);
+                        taskCollection.add(task);
+                        task.execute(ids.get(i));
+                    }
+                }catch (Exception e){
+                    e.getMessage();
                 }
+
+
             }
 
         }

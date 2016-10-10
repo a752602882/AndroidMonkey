@@ -24,6 +24,10 @@
         </activity>
 
 
+        <provider
+            android:authorities="dome.ninebox.com.androidmonkey.provider.MatchDetailsProvider"
+            android:name=".provider.MatchDetailsProvider"/>
+
        <service android:name=".JsonService"></service>
         <service android:name=".service.MatchIntentService"></service>
     </application>

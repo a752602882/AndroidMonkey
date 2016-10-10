@@ -17,7 +17,6 @@ import dome.ninebox.com.androidmonkey.R;
     public ImageView ivFeedBottom;
     public MyRecyclerViewHolder(View itemView) {
         super(itemView);
-
         hero_image = (ImageView) itemView.findViewById(R.id.hero_image);
       //  ivFeedBottom = (ImageView) itemView.findViewById(R.id.ivFeedBottom);
     }

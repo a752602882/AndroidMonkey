@@ -2,13 +2,17 @@ package dome.ninebox.com.androidmonkey.utils;
 
 
 
+import android.util.Log;
+
 import com.android.volley.VolleyLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import dome.ninebox.com.androidmonkey.MyApplication;
@@ -67,6 +71,8 @@ public class Utility {
             JSONObject josn =  response;
             JSONObject matchesExternal =josn.getJSONObject("result");
             long start_time =  matchesExternal.getLong("start_time");
+
+            getStringDate(start_time);
             long match_id   =  matchesExternal.getLong("match_id");
             boolean radiant_win= matchesExternal.getBoolean("radiant_win");
 
@@ -155,6 +161,19 @@ public class Utility {
 
 
         return  match;
+    }
+
+    /**
+     * 获取现在时间
+     *
+     * @return返回字符串格式 yyyy-MM-dd HH:mm:ss
+     */
+    public static String getStringDate(long date) {
+        Date currentTime = new Date(date* 1000);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(currentTime);
+        Log.d("TAG", "startTime Date: "+dateString);
+        return dateString;
     }
 
     public  static void handleHeroesResponse(DotaMaxDAO db, JSONObject response) {

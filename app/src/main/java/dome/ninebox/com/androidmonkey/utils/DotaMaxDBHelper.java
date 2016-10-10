@@ -22,7 +22,7 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
     public static final int VERSION =2;
 
     private static DotaMaxDBHelper mHelper=null;
-
+    public static final String TABLE_NAME = "Match";
     /**
      *  获得类对象
      */
@@ -41,7 +41,7 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
             + "name text, "
             + "localized_name text)";
     public static final String CREATE_MATCH = "create table Match ("
-            + "hid integer primary key autoincrement, "
+            + "_id integer primary key autoincrement, "
             + "match_id integer, "
             + "account_id integer, "
             + "start_time integer, "

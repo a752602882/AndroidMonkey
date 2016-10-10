@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,6 +19,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,11 +52,12 @@ import dome.ninebox.com.androidmonkey.R;
 import dome.ninebox.com.androidmonkey.io.DiskLruCache;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
 import dome.ninebox.com.androidmonkey.utils.DotaMaxDAO;
+import dome.ninebox.com.androidmonkey.utils.Utility;
 
 /**
  * Created by Administrator on 2016/4/25.
  */
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHolder> {
+public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerViewHolder> {
 
 
     @BindDrawable(R.drawable.hero_no)
@@ -66,6 +77,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
     public List<String> mMatch_ids;
     public LayoutInflater mLayoutInflater;
 
+    private LayoutInflater inflater;
+
     private List<List<MatchDetails>> listMatchDetails = new ArrayList<>();
 
 
@@ -77,14 +90,16 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
 
     private List<MatchDetails> mUesrDetails = new ArrayList<>();
 
-    public MyRecyclerViewAdapter(Context mContext, List<MatchDetails> uesrDetails) {
+    public MyRecyclerViewAdapter(Context context, Cursor c, int flags) {
+        super(context, c, flags);
+        inflater=LayoutInflater.from(context);
+        mContext = context;
 
-        this.mContext = mContext;
         mLayoutInflater = LayoutInflater.from(mContext);
         mMatch_ids = new ArrayList<String>();
         bitmapTaskCollection = new HashSet<>();
 
-        mUesrDetails = uesrDetails;
+
 
 
         //硬盘缓存处理
@@ -129,7 +144,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
      * 绑定ViewHoler，给item中的控件设置数据
      */
     @Override
-    public void onBindViewHolder(final MyRecyclerViewHolder holder, final int position) {
+    public void onBindViewHolder(MyRecyclerViewHolder holder, Cursor cursor) {
 
    /*     if (mOnItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -149,14 +164,39 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
         }
 */
 
-        if (mUesrDetails.size() == 2) {
-            //   holder.hero_image.setImageDrawable(hero_no);
+        MatchDetails md = new MatchDetails();
+        md.setImageUrl(cursor.getString(cursor.getColumnIndex("imageUrl")));
+
+        loadBitmaps(holder.hero_image,md.getImageUrl());
+        //md.setHero_id(hero_id);
+
+      /*  //设置imageUrl
+        md.setImageUrl(heroes.getName());
+        md.setPlayer_slot(player_slot);
+        md.setItem_0(item_0);
+        md.setItem_1(item_1);
+        md.setItem_2(item_2);
+        md.setItem_3(item_3);
+        md.setItem_4(item_4);
+        md.setItem_5(item_5);
+        md.setKills(kills);
+        md.setDeaths(deaths);
+        md.setAssists(assists);
+        md.setHero_damage(hero_damage);
+        md.setHero_healing(hero_healing);
+        md.setTower_damage(tower_damage);
+        md.setLevel(level);
+        md.setGold_per_min(gold_per_min);
+        md.setXp_per_min(xp_per_min);
+
+        md.setStart_time(start_time);
+        md.setMatch_id(match_id);*/
 
 
-            loadBitmaps(holder.hero_image, mUesrDetails.get(position).getImageUrl());
-
-        }
     }
+
+
+
 
 
     /**
@@ -186,6 +226,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewHo
     @Override
     public int getItemCount() {
         return 2;
+    }
+
+    @Override
+    protected void onContentChanged() {
+
     }
 
 
