@@ -12,8 +12,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-import dome.ninebox.com.androidmonkey.utils.DotaMaxDAO;
-import dome.ninebox.com.androidmonkey.utils.DotaMaxDAOImpl;
+import dome.ninebox.com.androidmonkey.db.DotaMaxDAO;
+import dome.ninebox.com.androidmonkey.db.DotaMaxDAOImpl;
 import dome.ninebox.com.androidmonkey.utils.Utility;
 
 /**
@@ -47,9 +47,10 @@ public class MyApplication extends Application {
 
         //把英雄放进数据库
       //  while(db.getHeroes(101)==null)
-        HttpReadHeroes();// 暂时不需要
-
-      mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue mQueue = Volley.newRequestQueue(content);
+        HttpReadHeroes(mQueue);// 暂时不需要
+        HttpReadItems(mQueue);
+  //  mRequestQueue = Volley.newRequestQueue(getApplicationContext());
 
 
     }
@@ -59,8 +60,8 @@ public class MyApplication extends Application {
 
 
 
-    public static void HttpReadHeroes() {
-        RequestQueue mQueue = Volley.newRequestQueue(content);
+    public static void HttpReadHeroes(RequestQueue mQueue) {
+
         String url ="https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/?" +
                 "key=BAA464D3B432D062BEA99BA753214681&language=zh_cn";
         JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
@@ -82,6 +83,31 @@ public class MyApplication extends Application {
         });
         mQueue.add(jsonRequest);
     }
+
+    public static void HttpReadItems(RequestQueue mQueue) {
+
+        String url ="https://api.steampowered.com/IEconDOTA2_570/GetGameItems/v0001/?key=BAA464D3B432D062BEA99BA753214681";
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("请求物品成功！response--" + response.toString());
+                        Utility.handleItemsResponse(db,response);
+
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("请求物品失败！ error--"+error);
+            }
+        });
+        mQueue.add(jsonRequest);
+    }
+
+
 
     public static Context getContext() {
         return content;

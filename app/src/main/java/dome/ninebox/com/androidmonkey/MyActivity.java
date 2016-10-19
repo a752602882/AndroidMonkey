@@ -1,5 +1,6 @@
 package dome.ninebox.com.androidmonkey;
 
+
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
@@ -95,7 +97,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         configViews();
 
        Intent intent = new Intent(this,MatchIntentService.class);
-       intent.putExtra("URL","https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAA464D3B432D062BEA99BA753214681&matches_requested=2&account_id=125690482");
+       intent.putExtra("URL","https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAA464D3B432D062BEA99BA753214681&matches_requested=4&account_id=125690482");
        startService(intent);
 
 

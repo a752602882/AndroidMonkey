@@ -4,30 +4,18 @@ package dome.ninebox.com.androidmonkey.adapter;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v7.widget.RecyclerView;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -51,8 +39,6 @@ import butterknife.BindDrawable;
 import dome.ninebox.com.androidmonkey.R;
 import dome.ninebox.com.androidmonkey.io.DiskLruCache;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
-import dome.ninebox.com.androidmonkey.utils.DotaMaxDAO;
-import dome.ninebox.com.androidmonkey.utils.Utility;
 
 /**
  * Created by Administrator on 2016/4/25.
@@ -133,12 +119,13 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
      */
     @Override
     public MyRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mLayoutInflater.inflate(R.layout.item_feed, parent, false);
-        MyRecyclerViewHolder mViewHodler = new MyRecyclerViewHolder(view);
 
-        return mViewHodler;
+        View view = mLayoutInflater.inflate(R.layout.item_feed, parent, false);
+
+        return  new MyRecyclerViewHolder(view);
 
     }
+
 
     /**
      * 绑定ViewHoler，给item中的控件设置数据
@@ -166,12 +153,48 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
 
         MatchDetails md = new MatchDetails();
         md.setImageUrl(cursor.getString(cursor.getColumnIndex("imageUrl")));
+        md.setAvatar(cursor.getString(cursor.getColumnIndex("avatar")));
+        md.setItem_0(cursor.getString(cursor.getColumnIndex("item_0")));
+        md.setItem_1(cursor.getString(cursor.getColumnIndex("item_1")));
+        md.setItem_2(cursor.getString(cursor.getColumnIndex("item_2")));
+        md.setItem_3(cursor.getString(cursor.getColumnIndex("item_3")));
+        md.setItem_4(cursor.getString(cursor.getColumnIndex("item_4")));
+        md.setItem_5(cursor.getString(cursor.getColumnIndex("item_5")));
+
+        holder.user_name.setText(cursor.getString(cursor.getColumnIndex("person_name")));
+        holder.hurt.setText(cursor.getString(cursor.getColumnIndex("hero_damage")));
+        float kda_info = cursor.getInt(cursor.getColumnIndex("kills"))+
+                cursor.getInt(cursor.getColumnIndex("deaths"))+
+                cursor.getInt(cursor.getColumnIndex("assists"));
+        holder.kda_info.setText(cursor.getInt(cursor.getColumnIndex("kills"))+"/"+
+                cursor.getInt(cursor.getColumnIndex("deaths"))+"/"+
+                cursor.getInt(cursor.getColumnIndex("assists")));
+        holder.kda.setText((kda_info/cursor.getInt(cursor.getColumnIndex("deaths")))+"");
+
+
 
         loadBitmaps(holder.hero_image,md.getImageUrl());
+        loadBitmaps(holder.avatar_image,md.getAvatar());
+        if (md.getItem_0()!=null) {
+            loadBitmaps(holder.item0, md.getItem_0());
+            loadBitmaps(holder.item1, md.getItem_1());
+            loadBitmaps(holder.item2, md.getItem_2());
+            loadBitmaps(holder.item3, md.getItem_3());
+            loadBitmaps(holder.item4, md.getItem_4());
+            loadBitmaps(holder.item5, md.getItem_5());
+        }
         //md.setHero_id(hero_id);
+      /*  loadBitmaps(holder.hero_image,""+md.getItem_0());
+        md.setItem_1(item_1);
+        md.setItem_2(item_2);
+        md.setItem_3(item_3);
+        md.setItem_4(item_4);
+        md.setItem_5(item_5);*/
 
+
+     //   md.setImageUrl(cursor.getString(cursor.getColumnIndex("imageUrl")));
       /*  //设置imageUrl
-        md.setImageUrl(heroes.getName());
+
         md.setPlayer_slot(player_slot);
         md.setItem_0(item_0);
         md.setItem_1(item_1);
@@ -223,10 +246,7 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
     }
 
 
-    @Override
-    public int getItemCount() {
-        return 2;
-    }
+
 
     @Override
     protected void onContentChanged() {
@@ -314,7 +334,7 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
                     // 将Bitmap对象添加到内存缓存当中
                     addBitmapToMemoryCache(imageUrl, bitmap);
                 }
-                return bitmap;
+                //return bitmap;
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

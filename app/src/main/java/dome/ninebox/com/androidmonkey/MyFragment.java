@@ -2,10 +2,15 @@ package dome.ninebox.com.androidmonkey;
 
 
 import android.annotation.TargetApi;
+
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
+
 import android.content.Intent;
 import android.content.IntentFilter;
+
+
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,8 +18,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +32,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
@@ -41,12 +56,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dome.ninebox.com.androidmonkey.adapter.MyRecyclerViewAdapter;
 import dome.ninebox.com.androidmonkey.adapter.MyStaggeredViewAdapter;
+import dome.ninebox.com.androidmonkey.db.DotaMaxDAO;
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
 import dome.ninebox.com.androidmonkey.provider.MatchDetailsProvider;
 import dome.ninebox.com.androidmonkey.service.MatchIntentService;
-import dome.ninebox.com.androidmonkey.utils.DotaMaxDAO;
-import dome.ninebox.com.androidmonkey.utils.DotaMaxDAOImpl;
 import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
 import dome.ninebox.com.androidmonkey.utils.Utility;
 import dome.ninebox.com.androidmonkey.widget.MessageResponse;
@@ -88,8 +102,6 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
     private List<MatchDetails> mUserDetails = new ArrayList<>();
 
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,6 +125,8 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
 
         flag = (int) getArguments().get("flag");
         configRecyclerView();
+        initLoader();
+
         // 刷新时，指示器旋转后变化的颜色
         mSwipeRefreshLayout.setColorSchemeResources(R.color.main_blue_light, R.color.main_blue_dark);
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -147,7 +161,7 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
         if (flag != STAGGERED_GRID) {
             if (mRecyclerViewAdapter == null) {
 
-                Cursor c =getActivity().getContentResolver().query(MatchDetailsProvider.URI_DOTA_ALL, null, null, null, null);
+                Cursor c = getActivity().getContentResolver().query(MatchDetailsProvider.URI_DOTA_ALL, null, null, null, null);
                 mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity(), c, 1);
             }
 
@@ -159,7 +173,7 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
             mRecyclerView.setAdapter(mStaggeredAdapter);
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
-
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override
@@ -201,13 +215,77 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
         for (MatchDetails details : msg) {
             if (details.getAccount_id() == 125690482) {
                 mUserDetails.add(details);
-                MyApplication.getDb().insertMatch(details);
+                HttpReadUserInfo(details);
+
             }
 
         }
 
         //  mRecyclerViewAdapter.notifyDataSetChanged();
         //  cancelAllTasks();
+    }
+
+    public void HttpReadUserInfo(final MatchDetails md) {
+        RequestQueue mQueue = Volley.newRequestQueue(getActivity());
+        String url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/" +
+                "v0002/?key=BAA464D3B432D062BEA99BA753214681&steamids=" + md.getSteam_id();
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        System.out.println("请求用户信息成功！response--" + response.toString());
+                        Utility.handleUserInfoResponse(md, response);
+
+                        DotaMaxDAO db =MyApplication.getDb();
+                        String item_0 = db.getItemsNameById(md.getItem_0());
+                        md.setItem_0(item_0);
+                        String item_1 = db.getItemsNameById(md.getItem_1());
+                        md.setItem_1(item_1);
+                        String item_2 = db.getItemsNameById(md.getItem_2());
+                        md.setItem_2(item_2);
+                        String item_3 = db.getItemsNameById(md.getItem_3());
+                        md.setItem_3(item_3);
+                        String item_4 = db.getItemsNameById(md.getItem_4());
+                        md.setItem_4(item_4);
+                        String item_5 = db.getItemsNameById(md.getItem_5());
+                        md.setItem_5(item_5);
+                        db.insertMatch(md);
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("请求用户信息失败！ error--" + error);
+            }
+        });
+        mQueue.add(jsonRequest);
+    }
+
+    private void initLoader() {
+
+        getLoaderManager().initLoader(1, null, new LoaderManager.LoaderCallbacks<Cursor>() {
+            @Override
+            public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+                CursorLoader loader = new CursorLoader(getActivity(), MatchDetailsProvider.URI_DOTA_ALL, null, null, null, null);
+
+                return loader;
+            }
+
+            @Override
+            public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                mRecyclerViewAdapter.swapCursor(data);
+            }
+
+            @Override
+            public void onLoaderReset(Loader<Cursor> loader) {
+                mRecyclerViewAdapter.swapCursor(null);
+            }
+        });
+
     }
 
 
@@ -223,15 +301,15 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
             for (int i = 0; i < ids.size(); i++) {
 
                 try {
-                    long intNum=Long.parseLong(ids.get(i).trim());
-                    Log.d("TAG", "intNum: "+intNum);
+                    long intNum = Long.parseLong(ids.get(i).trim());
+                    Log.d("TAG", "intNum: " + intNum);
                     if (dao.getMatch(intNum) == null) {
                         MatchInfoTask task = new MatchInfoTask();
                         task.setResponse(MyFragment.this);
                         taskCollection.add(task);
                         task.execute(ids.get(i));
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.getMessage();
                 }
 
@@ -304,8 +382,8 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
                 e.printStackTrace();
             }
 
-         /*   matchDetails.add(mds);
-            Log.d("TAG", "---------------  :" + mds.get(0).getHero_id());*/
+             /*   matchDetails.add(mds);
+                Log.d("TAG", "---------------  :" + mds.get(0).getHero_id());*/
             return mds;
 
         }
