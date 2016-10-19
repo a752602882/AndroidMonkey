@@ -11,7 +11,7 @@ http://dev.dota2.com/showthread.php?t=58317
 http://www.cnblogs.com/Scohura/tag/DOTA2/
 
 运行效果：好友真实数据
-https://github.com/a752602882/AndroidMonkey/blob/master/app/src/main/res/drawable/run_1.png
+![image]https://github.com/a752602882/AndroidMonkey/blob/master/app/src/main/res/drawable/run_1.png
 
 
 
