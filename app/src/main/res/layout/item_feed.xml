@@ -13,29 +13,42 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/radiant_win"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-        <dome.ninebox.com.androidmonkey.view.RoundedImageView
+            android:orientation="horizontal">
+
+            <dome.ninebox.com.androidmonkey.view.RoundedImageView
 
 
-            android:id="@+id/avatar_image"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:scaleType="fitXY"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp"
-            android:src="@mipmap/author" />
+                android:id="@+id/avatar_image"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:scaleType="fitXY"
+                android:src="@mipmap/author" />
 
+            <TextView
+                android:id="@+id/start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="5dp"
+                android:text="2015-15-15" />
+        </LinearLayout>
 
         <dome.ninebox.com.androidmonkey.adapter.SquaredFrameLayout
             android:id="@+id/vImageRoot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-         <include layout="@layout/item_feed_in_match_info" />
+            <include layout="@layout/item_feed_in_match_info" />
 
 
         </dome.ninebox.com.androidmonkey.adapter.SquaredFrameLayout>
-
 
 
         <LinearLayout
@@ -86,9 +99,10 @@
                     android:outAnimation="@anim/slide_out_likes_counter">
 
                     <TextView
+                        android:id="@+id/person_like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="123 likes"
+                        android:text="0 likes"
                         android:textColor="@color/text_like_counter" />
 
                     <TextView

@@ -5,9 +5,29 @@
     <color name="main_blue_dark">#30459E</color>
     <color name="main_white">#FFFFFF</color>
     <color name="main_black">#000000</color>
-    <color name="main_black_grey">#6D6D6D</color>
+    <color name="main_black_grey">#BDBDBD</color>
     <color name="main_red_grey">#7e2f2f</color>
     <color name="main_red">#ca3a3a</color>
     <color name="text_like_counter">#2b5a83</color>
     <color name="item_green">#0b8e28</color>
+
+    <color name="item_win">#0b8e28</color>
+    <color name="item_dir">#BDBDBD</color>
+
+    <color name="theme_background">#FFFFFF</color>
+    <color name="theme_icons">#FFFFFF</color>
+
+
+    <color name="colorPrimary300">#aed581</color>
+    <color name="colorPrimary500">#8bc34a</color>
+    <color name="colorPrimary800">#558b2f</color>
+
+
+    <color name="colorPrimary">#ca3a3a</color>
+    <color name="colorPrimaryDark">#7e2f2f</color>
+    <color name="colorAccentLight">#d81b60</color>
+
+
+    <color name="line_grey">#9E9E9E</color>
+
 </resources>

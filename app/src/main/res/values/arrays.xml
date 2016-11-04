@@ -2,10 +2,54 @@
 <resources>
 
     <string-array name="tab_titles">
-        <item>垂直List</item>
-        <item>水平List</item>
-        <item>垂直Grid</item>
-        <item>水平Grid</item>
-        <item>瀑布Staggered</item>
+        <item>战绩</item>
+        <item>五星图</item>
+        <item>消息</item>
+        <item>直播</item>
+        <item>....</item>
+    </string-array>
+
+    <string-array name="query_suggestions">
+        <item>奈斯图米兔</item>
+        <item>夜幕降临</item>
+        <item>128917671</item>
+        <item>88508515</item>
+        <item>Ruby</item>
+        <item>JavaScript</item>
+        <item>C#</item>
+        <item>Python</item>
+        <item>C</item>
+        <item>C++</item>
+        <item>PHP</item>
+        <item>Go</item>
+        <item>Perl</item>
+        <item>Bash</item>
+        <item>Lua</item>
+        <item>R</item>
+        <item>TCL</item>
+        <item>Haskell</item>
+        <item>Objective C</item>
+        <item>Swift</item>
+        <item>Kotlin</item>
+        <item>jQuery</item>
+        <item>Development</item>
+        <item>Web</item>
+        <item>Ajax</item>
+        <item>Test</item>
+        <item>Testing</item>
+        <item>CookBook</item>
+        <item>Beagle</item>
+        <item>VMware</item>
+        <item>Less.js</item>
+        <item>IDE</item>
+        <item>Arduino</item>
+        <item>Xamarin</item>
+        <item>UI</item>
+        <item>Microsoft</item>
+        <item>Application</item>
+        <item>Development</item>
+        <item>JUnit</item>
+        <item>SQL</item>
+        <item>Beagle</item>
     </string-array>
 </resources>

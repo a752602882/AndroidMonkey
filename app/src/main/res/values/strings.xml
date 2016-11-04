@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">AndroidMonKey</string>
+    <string name="app_name">DOTA2</string>
 
-    <string name="toolbar_title">New Demo</string>
+    <string name="toolbar_title">DOTA2</string>
     <string name="action_settings">settings</string>
     <string name="open">打开</string>
     <string name="close">关闭</string>
@@ -11,4 +11,21 @@
     <string name="item_clicked">item clicked！</string>
     <string name="item_longclicked">item long clicked！</string>
 
+    <string name="action_search">搜索</string>
+
+    <string name="search">输入SteamID</string>
+
+    <!-- nav_items -->
+    <string name="toolbar">Toolbar</string>
+    <string name="menu_item">Menu item</string>
+    <string name="history">History</string>
+    <string name="filters">Filters</string>
+
+    <string name="installed">Installed</string>
+    <string name="all">All</string>
+    <string name="version">定义</string>
+
+
+    <item type="id" name="tag_first"></item>
+    <item type="id" name="tag_second"></item>
 </resources>

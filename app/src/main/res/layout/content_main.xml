@@ -7,29 +7,41 @@
     android:fitsSystemWindows="true">
 
 
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/id_appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/id_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:title="@string/toolbar_title" />
+             />
 
+            <com.miguelcatalan.materialsearchview.MaterialSearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 />
+
+
+        </FrameLayout>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/id_tablayout"
-            app:layout_scrollFlags="scroll|enterAlways"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:tabMode="fixed"
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/main_white" />
 
@@ -38,18 +50,9 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/id_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/id_appbarlayout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/id_floatingactionbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:src="@mipmap/ic_action_plusone"
-        app:backgroundTint="@color/main_blue_light"
-        app:elevation="6dp"
-        app:pressedTranslationZ="12dp"
-        app:rippleColor="@color/main_blue_dark" />
 
 </android.support.design.widget.CoordinatorLayout>

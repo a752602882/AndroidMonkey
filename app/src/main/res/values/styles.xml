@@ -15,17 +15,33 @@
 
     </style>
 
-    <!-- 蓝色为主色调 -->
+    <!-- 红色为主色调 -->
     <style name="MyThemeRed" parent="Theme.AppCompat.Light.NoActionBar">
 
         <!--选中状态icon的颜色和字体颜色-->
         <item name="colorPrimary">@color/main_red</item>
         <item name="colorPrimaryDark">@color/main_red_grey</item>
-        <item name="colorAccent">@color/main_red_grey</item>
 
+        <item name="colorAccent">@color/theme_icons</item>
         <!--正常状态下字体颜色和icon颜色-->
         <item name="android:textColorPrimary">@color/main_white</item>
 
+        <item name="android:windowBackground">@color/theme_background</item>
+
+        <item name="actionMenuTextColor">@color/theme_icons</item>
+        <item name="android:textColorSecondary">@color/theme_icons</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
     </style>
+
+    <style name="BaseAppThemeDayNight" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccentLight</item>
+    </style>
+
+    <!-- AppTheme -->
+    <style name="AppThemeLight" parent="BaseAppThemeDayNight" />
 
 </resources>
