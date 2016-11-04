@@ -67,9 +67,19 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
             + "person_name text, "
             + "avatar text, "
             + "imageUrl text)";
+
+    public static final String CREATE_USER= "create table User ("
+            + "_id integer primary key , "
+            + "steam_id integer, "
+            + "name text, "
+            + "avatarmedium text)";
+
+
+
     private static final String DROP_HEROES="drop table if exists Heroes";
     private static final String DROP_ITEMS="drop table if exists Items";
     private static final String DROP_MATCH="drop table if exists Match";
+    private static final String DROP_USER="drop table if exists User";
 
     private DotaMaxDBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -80,6 +90,7 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_HEROES);
         db.execSQL(CREATE_ITEMS);
         db.execSQL(CREATE_MATCH);
+        db.execSQL(CREATE_USER);
     }
 
     @Override
@@ -87,10 +98,12 @@ public class DotaMaxDBHelper extends SQLiteOpenHelper {
         db.execSQL(DROP_HEROES);
         db.execSQL(DROP_MATCH);
         db.execSQL(DROP_ITEMS);
+        db.execSQL(DROP_USER);
 
         db.execSQL(CREATE_HEROES);
         db.execSQL(CREATE_ITEMS);
         db.execSQL(CREATE_MATCH);
+        db.execSQL(CREATE_USER);
     }
 
 

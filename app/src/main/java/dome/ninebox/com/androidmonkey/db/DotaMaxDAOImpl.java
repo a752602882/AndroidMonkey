@@ -3,6 +3,7 @@ package dome.ninebox.com.androidmonkey.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.Items;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.model.User;
 
 /**
  * Created by Administrator on 2016/7/15.
@@ -29,7 +31,7 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         for (int i = 0; i < heroList.size(); i++) {
             Cursor c = db.rawQuery("select * from Heroes where id=?", new String[]{String.valueOf(heroList.get(i).getId())});
-            if (c.getCount()==0) {
+            if (c.getCount() == 0) {
                 db.execSQL("insert into Heroes(id,name,localized_name) values(?,?,?)",
                         new Object[]{heroList.get(i).getId(), heroList.get(i).getName(), heroList.get(i).getLocalized_name()});
             }
@@ -42,10 +44,10 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
         for (int i = 0; i < itemsList.size(); i++) {
 
             Cursor c = db.rawQuery("select * from Items where _id=?", new String[]{String.valueOf(itemsList.get(i).get_id())});
-            if (c.getCount()==0){
+            if (c.getCount() == 0) {
                 db.execSQL("insert into Items(_id,cost,name,secret_shop,side_shop,recipe) values(?,?,?,?,?,?)",
-                        new Object[]{itemsList.get(i).get_id(), itemsList.get(i).getCost(),itemsList.get(i).getName(),
-                                itemsList.get(i).getSecret_shop(),itemsList.get(i).getSide_shop(),itemsList.get(i).getRecipe()});
+                        new Object[]{itemsList.get(i).get_id(), itemsList.get(i).getCost(), itemsList.get(i).getName(),
+                                itemsList.get(i).getSecret_shop(), itemsList.get(i).getSide_shop(), itemsList.get(i).getRecipe()});
             }
 
         }
@@ -101,10 +103,10 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
                 "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 
-        db.execSQL(sql, new Object[]{match.getMatch_id(), match.getAccount_id(),match.getSteam_id(), match.getStart_time(), match.getPlayer_slot(),
+        db.execSQL(sql, new Object[]{match.getMatch_id(), match.getAccount_id(), match.getSteam_id(), match.getStart_time(), match.getPlayer_slot(),
                 match.getItem_0(), match.getItem_1(), match.getItem_2(), match.getItem_3(), match.getItem_4(), match.getItem_5(),
                 match.getKills(), match.getDeaths(), match.getAssists(), match.getHero_damage(), match.getTower_damage(), match.getHero_healing(),
-                match.getLevel(), match.getGold_per_min(), match.getXp_per_min(), match.getRadiant_win(), match.getImageUrl(),match.getAvatar(),match.getPerson_name()});
+                match.getLevel(), match.getGold_per_min(), match.getXp_per_min(), match.getRadiant_win(), match.getImageUrl(), match.getAvatar(), match.getPerson_name()});
 
     }
 
@@ -150,7 +152,7 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
     @Override
     public List<MatchDetails> getMatchByAccountId(long account_id) {
 
-        List<MatchDetails> matchDetailsList =new ArrayList<>();
+        List<MatchDetails> matchDetailsList = new ArrayList<>();
 
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         List<MatchDetails> list = new ArrayList<MatchDetails>();
@@ -183,8 +185,8 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
 
         }
 
-        if (matchDetailsList.size()>0){
-            return  matchDetailsList;
+        if (matchDetailsList.size() > 0) {
+            return matchDetailsList;
         }
 
         return null;
@@ -196,7 +198,7 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
 
 
         Cursor cursor = db.rawQuery("select * from Items where  _id=?", new String[]{item_id});
-        if (cursor.getCount()!=0) {
+        if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 return name;
@@ -205,5 +207,33 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
         return null;
     }
 
+    @Override
+    public synchronized void insertUser(User user) {
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        if (user.getName() != null) {
+            Cursor c = db.rawQuery("select * from User where steam_id=?", new String[]{String.valueOf(user.getSteam_id())});
+            Log.d("TAG", c.getCount() + "");
+            if (c.getCount() <= 0) {
+                db.execSQL("insert into User(steam_id,name,avatarmedium) values(?,?,?)",
+                        new Object[]{user.getSteam_id(), user.getName(), user.getAvatarmedium()});
+            }
+        }
+    }
+
+    public synchronized List<Long> getUser() {
+        List<Long> steamIds =new ArrayList<>();
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("select * from User", null);
+        Log.d("TAG", c.getCount() + "");
+        if (c.getCount() != 0) {
+            while (c.moveToNext()) {
+                Long  steam_id= c.getLong(c.getColumnIndex("steam_id"));
+                steamIds.add(steam_id);
+            }
+            return steamIds;
+        }
+        return null;
+
+    }
 
 }

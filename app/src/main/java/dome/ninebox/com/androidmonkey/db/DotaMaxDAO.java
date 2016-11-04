@@ -6,13 +6,12 @@ import java.util.List;
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.Items;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.model.User;
 
 /**
  * Created by Administrator on 2016/5/4.
  */
 public interface DotaMaxDAO {
-
-
 
 
     /**
@@ -55,5 +54,19 @@ public interface DotaMaxDAO {
 
 
     String getItemsNameById(String item_id);
+
+
+
+    /**
+     * 添加到User表
+     */
+    void insertUser(User user);
+
+    /**
+     * 从User表读取所有的用户
+     */
+    List<Long> getUser();
+
+
 
 }

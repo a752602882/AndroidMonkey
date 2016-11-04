@@ -4,9 +4,11 @@ package dome.ninebox.com.androidmonkey.adapter;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -29,16 +31,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 
-import butterknife.BindDrawable;
 import dome.ninebox.com.androidmonkey.R;
 import dome.ninebox.com.androidmonkey.io.DiskLruCache;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.utils.Utility;
 
 /**
  * Created by Administrator on 2016/4/25.
@@ -46,8 +49,9 @@ import dome.ninebox.com.androidmonkey.model.MatchDetails;
 public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerViewHolder> {
 
 
-    @BindDrawable(R.drawable.hero_no)
-    protected Drawable hero_no;
+
+
+
     /**
      * 图片硬盘缓存核心类。
      */
@@ -78,14 +82,13 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
 
     public MyRecyclerViewAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        inflater=LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context);
         mContext = context;
+
 
         mLayoutInflater = LayoutInflater.from(mContext);
         mMatch_ids = new ArrayList<String>();
         bitmapTaskCollection = new HashSet<>();
-
-
 
 
         //硬盘缓存处理
@@ -122,7 +125,7 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
 
         View view = mLayoutInflater.inflate(R.layout.item_feed, parent, false);
 
-        return  new MyRecyclerViewHolder(view);
+        return new MyRecyclerViewHolder(view);
 
     }
 
@@ -160,22 +163,34 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
         md.setItem_3(cursor.getString(cursor.getColumnIndex("item_3")));
         md.setItem_4(cursor.getString(cursor.getColumnIndex("item_4")));
         md.setItem_5(cursor.getString(cursor.getColumnIndex("item_5")));
+        md.setRadiant_win(cursor.getInt(cursor.getColumnIndex("radiant_win")));
+        md.setStart_time(cursor.getLong(cursor.getColumnIndex("start_time")));
+
 
         holder.user_name.setText(cursor.getString(cursor.getColumnIndex("person_name")));
         holder.hurt.setText(cursor.getString(cursor.getColumnIndex("hero_damage")));
-        float kda_info = cursor.getInt(cursor.getColumnIndex("kills"))+
-                cursor.getInt(cursor.getColumnIndex("deaths"))+
+        float kda_info = cursor.getInt(cursor.getColumnIndex("kills")) +
+                cursor.getInt(cursor.getColumnIndex("deaths")) +
                 cursor.getInt(cursor.getColumnIndex("assists"));
-        holder.kda_info.setText(cursor.getInt(cursor.getColumnIndex("kills"))+"/"+
-                cursor.getInt(cursor.getColumnIndex("deaths"))+"/"+
+        holder.kda_info.setText(cursor.getInt(cursor.getColumnIndex("kills")) + "/" +
+                cursor.getInt(cursor.getColumnIndex("deaths")) + "/" +
                 cursor.getInt(cursor.getColumnIndex("assists")));
-        holder.kda.setText((kda_info/cursor.getInt(cursor.getColumnIndex("deaths")))+"");
+        DecimalFormat decimalFormat=new DecimalFormat(".00");
+        holder.kda.setText((decimalFormat.format(kda_info / cursor.getInt(cursor.getColumnIndex("deaths")))));
+
+        if (md.getRadiant_win() == 0) {
+            holder.radiant_win.setBackgroundColor(mContext.getResources().getColor(R.color.item_win));
+        } else {
+            holder.radiant_win.setBackgroundColor(mContext.getResources().getColor(R.color.item_dir));
+        }
+        holder.start_time.setText(Utility.getStringDate(md.getStart_time()));
 
 
 
-        loadBitmaps(holder.hero_image,md.getImageUrl());
-        loadBitmaps(holder.avatar_image,md.getAvatar());
-        if (md.getItem_0()!=null) {
+
+        loadBitmaps(holder.hero_image, md.getImageUrl());
+        loadBitmaps(holder.avatar_image, md.getAvatar());
+        if (md.getItem_0() != null) {
             loadBitmaps(holder.item0, md.getItem_0());
             loadBitmaps(holder.item1, md.getItem_1());
             loadBitmaps(holder.item2, md.getItem_2());
@@ -192,34 +207,7 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
         md.setItem_5(item_5);*/
 
 
-     //   md.setImageUrl(cursor.getString(cursor.getColumnIndex("imageUrl")));
-      /*  //设置imageUrl
-
-        md.setPlayer_slot(player_slot);
-        md.setItem_0(item_0);
-        md.setItem_1(item_1);
-        md.setItem_2(item_2);
-        md.setItem_3(item_3);
-        md.setItem_4(item_4);
-        md.setItem_5(item_5);
-        md.setKills(kills);
-        md.setDeaths(deaths);
-        md.setAssists(assists);
-        md.setHero_damage(hero_damage);
-        md.setHero_healing(hero_healing);
-        md.setTower_damage(tower_damage);
-        md.setLevel(level);
-        md.setGold_per_min(gold_per_min);
-        md.setXp_per_min(xp_per_min);
-
-        md.setStart_time(start_time);
-        md.setMatch_id(match_id);*/
-
-
     }
-
-
-
 
 
     /**
@@ -227,25 +215,32 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
      * 如果发现任何一个ImageView的Bitmap对象不在缓存中，就会开启异步线程去下载图片。
      */
     public void loadBitmaps(ImageView imageView, String imageUrl) {
+
+        Bitmap mLoadingBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.item_null);
         try {
-            Bitmap bitmap = getBitmapFromMemoryCache(imageUrl);
-            if (bitmap == null) {
+            if (cancelBeforeTask(imageUrl, imageView)) {
+                Bitmap bitmap = getBitmapFromMemoryCache(imageUrl);
+                if (bitmap == null) {
 
                     DownLoadBitmapTask task = new DownLoadBitmapTask(imageView);
+                    AsyncDrawable drawable = new AsyncDrawable(mContext.getResources(), mLoadingBitmap, task);
+                    //!!!!
+                    imageView.setImageDrawable(drawable);
                     bitmapTaskCollection.add(task);
                     task.execute(imageUrl);
 
-            } else {
-                if (imageView != null && bitmap != null) {
-                    imageView.setImageBitmap(bitmap);
+
+
+                } else {
+                    if (imageView != null && bitmap != null) {
+                        imageView.setImageBitmap(bitmap);
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
 
 
     @Override
@@ -281,19 +276,19 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
      */
     class DownLoadBitmapTask extends AsyncTask<String, Void, Bitmap> {
 
-        private final WeakReference imageViewReference;
+        private  ImageView imageView;
+        private final WeakReference<ImageView> imageViewReference;
         private String imageUrl;
 
         public DownLoadBitmapTask(ImageView imageView) {
-            imageViewReference = new WeakReference(imageView);
+            this.imageView =imageView;
+            imageViewReference = new WeakReference<ImageView>(imageView);
         }
-
-
 
 
         @Override
         protected Bitmap doInBackground(String... params) {
-             imageUrl = params[0];
+            imageUrl = params[0];
 
             //下载准备
             FileDescriptor fileDescriptor = null;
@@ -364,14 +359,16 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
                 bitmap = null;
             }
 
+            //第二次判断，如果iamgeview里面的task跟这个item根据适配器传进来的正确url启动的task不相同，就不显示图片
+
             if (imageViewReference != null && bitmap != null) {
                 final ImageView imageView = (ImageView) imageViewReference.get();
-            /*    final DownLoadBitmapTask downLoadBitmapTask =
+                final DownLoadBitmapTask downLoadBitmapTask =
                         getBitmapWorkerTask(imageView);
                 if (this == downLoadBitmapTask && imageView != null) {
                     imageView.setImageBitmap(bitmap);
-                }*/
-                imageView.setImageBitmap(bitmap);
+                }
+
             }
 
         }
@@ -447,6 +444,7 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
             }
         }
     }
+
     /**
      * 取消所有正在下载或等待下载的任务。
      */
@@ -525,6 +523,46 @@ public class MyRecyclerViewAdapter extends RecyclerViewCursorAdapter<MyRecyclerV
      * 麻蛋，还说写个线程类来处理，不是有异步了吗，麻蛋麻蛋
      * --------------创建一个专用的Drawable的子类来储存任务的引用---------------
      */
+    private static DownLoadBitmapTask getBitmapWorkerTask(ImageView imageView) {
+        if (imageView != null) {
+            final Drawable drawable = imageView.getDrawable();
+            if (drawable instanceof AsyncDrawable) {
+                final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+                return asyncDrawable.getBitmapTask();
+            }
+        }
+        return null;
+    }
 
 
+    static class AsyncDrawable extends BitmapDrawable {
+
+        private WeakReference<DownLoadBitmapTask> taskWeakReference;
+
+        public AsyncDrawable(Resources res, Bitmap bitmap
+                , DownLoadBitmapTask task) {
+            super(res, bitmap);
+            taskWeakReference = new WeakReference<DownLoadBitmapTask>(task);
+        }
+
+        public DownLoadBitmapTask getBitmapTask(){
+            return taskWeakReference.get();
+        }
+    }
+
+    public boolean cancelBeforeTask(String url, ImageView imageView){
+
+        DownLoadBitmapTask task = getBitmapWorkerTask(imageView);
+
+        if(task != null){
+            String imgUrl = task.imageUrl;
+            if (imgUrl != url || imgUrl == ""){
+                task.cancel(true);
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
