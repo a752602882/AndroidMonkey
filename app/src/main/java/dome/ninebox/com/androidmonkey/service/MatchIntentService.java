@@ -33,6 +33,7 @@ public class MatchIntentService extends IntentService {
     public static final String BROADCAST_ACTION = "dome.ninebox.com.androidmonkey.adapter.MyRecyclerViewAdapter";
 
     public static final String EXTENDED_DATA= "Date";
+    public static final String STEAM_ID= "STEAM_ID";
 
 
 
@@ -103,7 +104,7 @@ public class MatchIntentService extends IntentService {
                 con.disconnect();
                 Intent intent1 = new Intent(BROADCAST_ACTION);
                 intent1.putStringArrayListExtra(EXTENDED_DATA, (ArrayList<String>) matches);
-
+            //    intent1.putExtra(STEAM_ID,  intent.getStringExtra(STEAM_ID));
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
 
 

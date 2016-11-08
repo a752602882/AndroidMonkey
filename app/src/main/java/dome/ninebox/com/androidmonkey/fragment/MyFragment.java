@@ -103,7 +103,7 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
             Cursor c = getActivity().getContentResolver().query(MatchDetailsProvider.URI_DOTA_ALL, null, null, null, sortBy);
             mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity(), c, 1);
         }
-
+        mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerViewAdapter.setmOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -114,7 +114,7 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
      * 注册广播
      */
     private void setRegisterBroadcastManager() {
-        mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+
         //注册广播接收器
         IntentFilter filter = new IntentFilter();
         filter.addAction(MatchIntentService.BROADCAST_ACTION);

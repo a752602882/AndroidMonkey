@@ -20,13 +20,14 @@ import dome.ninebox.com.androidmonkey.MyApplication;
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.Items;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.model.User;
 
 /**
  * Created by Administrator on 2016/5/4.
  */
 public class Utility {
 
-    private static long STEAM64 =76561197960265728L;
+    public static long STEAM64 =76561197960265728L;
 
 
     /**
@@ -99,6 +100,45 @@ public class Utility {
 
         return true;
     }
+
+
+    /**
+     * 返回用户的详细信息
+     */
+    public synchronized static boolean handleUserInfoResponse(User md, JSONObject response){
+
+
+
+        JSONObject json =  response;
+        String avatar="";
+        String person_name="";
+
+
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = json.getJSONObject("response").getJSONArray("players");
+            VolleyLog.d("jsonArray matches--->%d", jsonArray.length());
+            for (int i = 0; i<jsonArray.length();i++) {
+                JSONObject user = (JSONObject) jsonArray.get(i) ;
+                avatar = user.getString("avatarmedium");
+                person_name= user.getString("personaname");
+
+                if (avatar.length()>0&&person_name.length()>0){
+                    //
+                }
+                md.setAvatarmedium(avatar);
+                md.setName(person_name);
+
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
 
 
     /**
