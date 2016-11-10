@@ -45,7 +45,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import dome.ninebox.com.androidmonkey.adapter.MyViewPagerAdapter;
 import dome.ninebox.com.androidmonkey.db.DotaMaxDAO;
 import dome.ninebox.com.androidmonkey.fragment.MyFragment;
@@ -123,6 +122,7 @@ public class MyActivity extends AppCompatActivity implements ViewPager.OnPageCha
 
         Intent intent = new Intent(this, MatchIntentService.class);
         intent.putExtra("URL", "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAA464D3B432D062BEA99BA753214681&matches_requested=4&account_id=125690482");
+        intent.putExtra(MatchIntentService.STEAM_ID, 125690482L);
         startService(intent);
 
 
@@ -152,6 +152,7 @@ public class MyActivity extends AppCompatActivity implements ViewPager.OnPageCha
 
         TextView userName = (TextView) view.findViewById(R.id.user_name);
         userName.setText(user.getName());
+        //这里为了显示就不加STEAM64
         TextView steamId = (TextView) view.findViewById(R.id.steam_id);
         steamId.setText(user.getSteam_id()+"");
         Button button = (Button) view.findViewById(R.id.attention);
@@ -159,7 +160,15 @@ public class MyActivity extends AppCompatActivity implements ViewPager.OnPageCha
             @Override
             public void onClick(View view) {
                 DotaMaxDAO db = MyApplication.getDb();
-                db.insertUser(user);
+                user.setSteam_id(user.getSteam_id()+Utility.STEAM64);
+                boolean isInsert =db.insertUser(user);
+                if (isInsert==true){
+                    SnackbarUtil.show(mViewPager, "添加用户："+user.getName()+"成功", 0);
+                }else {
+                    SnackbarUtil.show(mViewPager, "添加用户："+user.getName()+"可能已经存在，", 0);
+                }
+                mMaterialDialog.dismiss();
+
             }
         });
         mMaterialDialog.setCanceledOnTouchOutside(true);
@@ -373,7 +382,7 @@ public class MyActivity extends AppCompatActivity implements ViewPager.OnPageCha
 
     public void HttpReadUserInfo(final User user) {
 
-        long steam_id = user.getSteam_id() + Utility.STEAM64;
+        long steam_id = user.getSteam_id() +Utility.STEAM64;
         final RequestQueue mQueue = Volley.newRequestQueue(this);
         String url = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/" +
                 "v0002/?key=BAA464D3B432D062BEA99BA753214681&steamids=" + steam_id;
@@ -388,6 +397,9 @@ public class MyActivity extends AppCompatActivity implements ViewPager.OnPageCha
                        /* DotaMaxDAO db = MyApplication.getDb();
                         db.insertUser(user);*/
                         mMaterialDialog.dismiss();
+                        if(user.getName()==null){
+                            SnackbarUtil.show(mViewPager, "用户信息读取失败~~", 1);
+                        }
                         setSucceedMaterialDialog(user, mQueue);
 
 

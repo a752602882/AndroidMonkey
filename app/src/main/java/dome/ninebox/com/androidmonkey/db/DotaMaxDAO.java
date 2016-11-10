@@ -60,7 +60,7 @@ public interface DotaMaxDAO {
     /**
      * 添加到User表
      */
-    void insertUser(User user);
+    boolean insertUser(User user);
 
     /**
      * 从User表读取所有的用户

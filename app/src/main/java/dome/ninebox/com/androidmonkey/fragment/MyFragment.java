@@ -7,6 +7,7 @@
 package dome.ninebox.com.androidmonkey.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -24,13 +25,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dome.ninebox.com.androidmonkey.MyApplication;
 import dome.ninebox.com.androidmonkey.R;
 import dome.ninebox.com.androidmonkey.adapter.MyRecyclerViewAdapter;
+import dome.ninebox.com.androidmonkey.db.DotaMaxDAO;
 import dome.ninebox.com.androidmonkey.provider.MatchDetailsProvider;
 import dome.ninebox.com.androidmonkey.service.MatchIntentService;
 import dome.ninebox.com.androidmonkey.utils.SnackbarUtil;
+import dome.ninebox.com.androidmonkey.utils.Utility;
 
 
 /**
@@ -99,7 +106,7 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
      */
     private void setRecyclerViewAdapter() {
         if (mRecyclerViewAdapter == null) {
-            String sortBy = "start_time DESC limit 4 offset 0";
+            String sortBy = "start_time DESC ";
             Cursor c = getActivity().getContentResolver().query(MatchDetailsProvider.URI_DOTA_ALL, null, null, null, sortBy);
             mRecyclerViewAdapter = new MyRecyclerViewAdapter(getActivity(), c, 1);
         }
@@ -142,17 +149,42 @@ public class MyFragment extends Fragment implements MyRecyclerViewAdapter.OnItem
 
                 if (flag != STAGGERED_GRID) {
                     //  mRecyclerViewAdapter.mDatas.add(0, "new" + temp);
-                    mRecyclerViewAdapter.notifyDataSetChanged();
+
+
+
 
                    /* Intent intent = new Intent(mContext, MatchIntentService.class);
                     intent.putExtra("URL", "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAA464D3B432D062BEA99BA753214681&matches_requested=6&account_id=" + user.getSteam_id());
                     intent.putExtra("STEAM_ID", user.getSteam_id());
                     mContext.startService(intent);*/
 
-                    /*String sortBy = "start_time DESC limit 4 offset 0";
-                    Cursor c = getActivity().getContentResolver().query(MatchDetailsProvider.URI_DOTA_ALL, null, null, null, sortBy);*/
 
+                 /*   Cursor c = getActivity().getContentResolver().query(MatchDetailsProvider.URI_DOTA_ALL, null, null, null,null);
+                    while (c.moveToNext()){
+                        Intent intent = new Intent(mContext, MatchIntentService.class);
+                        intent.putExtra("URL", "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAA464D3B432D062BEA99BA753214681&matches_requested=6&account_id=" + user.getSteam_id());
+                        intent.putExtra("STEAM_ID", user.getSteam_id());
+                        mContext.startService(intent);
+                    }*/
+                 DotaMaxDAO dao = MyApplication.getDb();
+                 List<Long>  steam_id_all =  dao.getUser();
+
+                 if (steam_id_all==null){
+                     return;
+                 }
+                 for(long steam_id: steam_id_all){
+
+                     long account_id =steam_id- Utility.STEAM64;
+                     Intent intent = new Intent(mContext, MatchIntentService.class);
+                     intent.putExtra("URL", "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAA464D3B432D062BEA99BA753214681&matches_requested=6&account_id=" + account_id);
+                     intent.putExtra("STEAM_ID", account_id);
+                     mContext.startService(intent);
+
+                 }
+
+                //    mRecyclerViewAdapter.notifyDataSetChanged();
                     getActivity().getContentResolver().notifyChange(MatchDetailsProvider.URI_DOTA_ALL,null);
+
                 }
             }
         }, 1000);

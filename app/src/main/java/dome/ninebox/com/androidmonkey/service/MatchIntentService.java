@@ -52,6 +52,7 @@ public class MatchIntentService extends IntentService {
         String url = null;
         HttpURLConnection con = null;
         url = intent.getStringExtra("URL");
+
         InputStream input = null;
         StringBuffer jsonBuilder =new StringBuffer();
 
@@ -100,11 +101,15 @@ public class MatchIntentService extends IntentService {
             e.printStackTrace();
         }finally {
             try {
+                if (input==null){
+                    return;
+                }
                 input.close();
                 con.disconnect();
                 Intent intent1 = new Intent(BROADCAST_ACTION);
                 intent1.putStringArrayListExtra(EXTENDED_DATA, (ArrayList<String>) matches);
-            //    intent1.putExtra(STEAM_ID,  intent.getStringExtra(STEAM_ID));
+                Log.d("TAG", "STEAM_ID----"+intent.getLongExtra(STEAM_ID,0)+"");
+                intent1.putExtra(STEAM_ID,  intent.getLongExtra(STEAM_ID,0));
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent1);
 
 

@@ -208,26 +208,30 @@ public class DotaMaxDAOImpl implements DotaMaxDAO {
     }
 
     @Override
-    public synchronized void insertUser(User user) {
+    public synchronized boolean insertUser(User user) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         if (user.getName() != null) {
             Cursor c = db.rawQuery("select * from User where steam_id=?", new String[]{String.valueOf(user.getSteam_id())});
-            Log.d("TAG", c.getCount() + "");
-            if (c.getCount() <= 0) {
-                db.execSQL("insert into User(steam_id,name,avatarmedium) values(?,?,?)",
-                        new Object[]{user.getSteam_id(), user.getName(), user.getAvatarmedium()});
+            if (c.getCount() > 0) {
+
+                return false;
             }
+            Log.d("TAG", c.getCount() + "");
+            db.execSQL("insert into User(steam_id,name,avatarmedium) values(?,?,?)",
+                    new Object[]{user.getSteam_id(), user.getName(), user.getAvatarmedium()});
+            return true;
         }
+        return false;
     }
 
     public synchronized List<Long> getUser() {
-        List<Long> steamIds =new ArrayList<>();
+        List<Long> steamIds = new ArrayList<>();
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         Cursor c = db.rawQuery("select * from User", null);
         Log.d("TAG", c.getCount() + "");
         if (c.getCount() != 0) {
             while (c.moveToNext()) {
-                Long  steam_id= c.getLong(c.getColumnIndex("steam_id"));
+                Long steam_id = c.getLong(c.getColumnIndex("steam_id"));
                 steamIds.add(steam_id);
             }
             return steamIds;

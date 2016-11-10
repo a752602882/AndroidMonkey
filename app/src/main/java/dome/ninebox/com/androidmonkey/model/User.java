@@ -42,4 +42,15 @@ public class User {
     public void setAvatarmedium(String avatarmedium) {
         this.avatarmedium = avatarmedium;
     }
+
+    public User() {
+
+    }
+
+    public User(long steam_id, String name, String avatarmedium) {
+
+        this.steam_id = steam_id;
+        this.name = name;
+        this.avatarmedium = avatarmedium;
+    }
 }

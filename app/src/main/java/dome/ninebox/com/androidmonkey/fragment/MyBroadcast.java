@@ -31,6 +31,7 @@ import dome.ninebox.com.androidmonkey.MyApplication;
 import dome.ninebox.com.androidmonkey.db.DotaMaxDAO;
 import dome.ninebox.com.androidmonkey.model.Heroes;
 import dome.ninebox.com.androidmonkey.model.MatchDetails;
+import dome.ninebox.com.androidmonkey.model.User;
 import dome.ninebox.com.androidmonkey.service.MatchIntentService;
 import dome.ninebox.com.androidmonkey.utils.Utility;
 import dome.ninebox.com.androidmonkey.widget.MessageResponse;
@@ -128,7 +129,7 @@ public class MyBroadcast extends BroadcastReceiver implements MessageResponse {
                         String item_5 = db.getItemsNameById(md.getItem_5());
                         md.setItem_5(item_5);
                         db.insertMatch(md);
-
+                        db.insertUser(new User(md.getSteam_id(),md.getPerson_name(),md.getAvatar()));
                     }
                 }, new Response.ErrorListener() {
 
