@@ -11,7 +11,11 @@ STEAMID32 + 76561197960265728 = STEAMID64
 
 运行效果：好友真实数据：
 
-<p><img src="screenshot/run_1.png" width="50%" />
+<p>
+<img src="screenshot/run_1.jpg" width="33%" />
+<img src="screenshot/run_2.jpg" width="33%" />
+<img src="screenshot/run_3.jpg" width="33%" />
+
 </p>
 
 
